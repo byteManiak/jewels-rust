@@ -9,7 +9,7 @@ pub struct TexManager<'a> {
 
 impl<'a> TexManager<'a> {
     pub fn new(creator: &'a TextureCreator<WindowContext>) -> Self {
-        Self { loader: &creator, textures: HashMap::new() }
+        Self { loader: creator, textures: HashMap::new() }
     }
 
     pub fn create_texture(&mut self, path: &str, name: &str) -> Result<(), String> {

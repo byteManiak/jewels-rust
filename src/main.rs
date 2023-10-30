@@ -3,9 +3,10 @@ mod engine;
 
 use engine::{context::Context, texture::TexManager};
 use game::game::{Game};
+use sdl2::keyboard::Keycode;
 
 fn main() -> Result<(), String> {
-    let ctx = Context::create_ctx("bruh", 1024, 768, true)?;
+    let mut ctx = Context::create_ctx("bruh", 1024, 768, true)?;
     let tc = ctx.renderer.texture_creator();
     let mut tm = TexManager::new(&tc);
 
@@ -14,7 +15,9 @@ fn main() -> Result<(), String> {
     game.load_assets(&mut tm)?;
 
     loop {
-        if !game.update() {
+        ctx.update_events();
+
+        if ctx.is_released(Keycode::Escape) {
             break;
         }
     }

@@ -1,0 +1,12 @@
+[package]
+name = "jewels-rust"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "jewels-rust"
+path = "src/main.rs"
+
+[dependencies.sdl2]
+version = "0.35.2"
+features = ["image", "mixer"]

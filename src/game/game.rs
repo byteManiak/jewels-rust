@@ -1,39 +1,72 @@
-use crate::engine::texture::TexManager;
+use sdl2::keyboard::Keycode;
+
+use crate::engine::assets::AssetManager;
+use crate::engine::context::Context;
 use crate::game::mainmenu::MainMenu;
 use crate::game::board::Board;
 
 pub struct Game {
-    mainmenu: MainMenu,
-    board: Board,
-    inMenu: bool
+    mainmenu: Option<MainMenu>,
+    board: Option<Board>,
+    in_menu: bool
 }
 
 impl<'a> Game {
     pub fn new() -> Result<Self, String> {
 
         Ok(Self {
-            mainmenu: MainMenu {  },
-            board: Board { logoMoving: true, logoY: -24  },
-            inMenu: true})
+            mainmenu: None,
+            board: None,
+            in_menu: true})
     }
 
-    pub fn load_assets(&self, manager: &mut TexManager<'a>) -> Result<(), String> {
-        manager.create_texture("assets/jewel1.pcx", "gem1")?;
-        manager.create_texture("assets/jewel2.pcx", "gem2")?;
-        manager.create_texture("assets/jewel3.pcx", "gem3")?;
-        manager.create_texture("assets/jewel4.pcx", "gem4")?;
-        manager.create_texture("assets/jewel5.pcx", "gem5")?;
-        manager.create_texture("assets/jewel6.pcx", "gem6")?;
-        manager.create_texture("assets/arrows.pcx", "arrows")?;
-        manager.create_texture("assets/logo.pcx", "logo")?;
-        manager.create_texture("assets/barholder.pcx", "barholder")?;
-        manager.create_texture("assets/bar.pcx", "bar")?;
-        manager.create_texture("assets/bardesc.pcx", "bardesc")?;
+    pub fn init(&mut self, manager: &mut AssetManager<'a>) -> Result<(), String> {
+        manager.load_texture("assets/jewel1.pcx", "gem1")?;
+        manager.load_texture("assets/jewel2.pcx", "gem2")?;
+        manager.load_texture("assets/jewel3.pcx", "gem3")?;
+        manager.load_texture("assets/jewel4.pcx", "gem4")?;
+        manager.load_texture("assets/jewel5.pcx", "gem5")?;
+        manager.load_texture("assets/jewel6.pcx", "gem6")?;
+        manager.load_texture("assets/arrows.pcx", "arrows")?;
+        manager.load_texture("assets/logo.pcx", "logo")?;
+        manager.load_texture("assets/barholder.pcx", "barholder")?;
+        manager.load_texture("assets/bar.pcx", "bar")?;
+        manager.load_texture("assets/bardesc.pcx", "bardesc")?;
+
+        for f in 0..=7 {
+            manager.load_sound(format!("assets/combo{:?}.wav", f).as_str(), format!("combo{:?}", f).as_str())?;
+        }
+        manager.load_sound("assets/intro.wav", "intro")?;
+
+        self.mainmenu = Some(MainMenu::new(manager));
+        self.board = Some(Board {  });
 
         Ok(())
     }
 
-    pub fn update(&self) -> bool{
-        false
+    pub fn update(&mut self, ctx: &mut Context, manager: &AssetManager) -> bool{
+        let mainmenu = self.mainmenu.as_mut().unwrap();
+        let board = self.board.as_mut().unwrap();
+
+        ctx.update_events();
+
+        if self.in_menu {
+            if mainmenu.update(&ctx.input, &manager) {
+                self.in_menu = false;
+                board.load_game();
+            }
+        } else {
+            if board.update() {
+                return false;
+            }
+        }
+
+        if ctx.input.is_released(Keycode::Escape) {
+            return false;
+        }
+
+        manager.draw_texture(&mut ctx.renderer, "gem1", 16, 16, 32, 32);
+
+        true
     }
 }

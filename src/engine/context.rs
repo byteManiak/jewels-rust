@@ -2,24 +2,14 @@ use std::collections::HashSet;
 
 use sdl2::{Sdl, render::WindowCanvas, mixer::{AUDIO_S16LSB, InitFlag, Sdl2MixerContext}, keyboard::Keycode};
 
-struct Input {
-    _prev_keys_state: HashSet<Keycode>,
-    new_keys: HashSet<Keycode>,
-    old_keys: HashSet<Keycode>
-}
-
-impl Input {
-    fn new() -> Self {
-        Self {_prev_keys_state: HashSet::new(), new_keys: HashSet::new(), old_keys: HashSet::new()}
-    }
-}
+use super::input::Input;
 
 pub struct Context {
     pub sdl: Sdl,
     pub renderer: WindowCanvas,
     pub audio: Sdl2MixerContext,
 
-    input: Input
+    pub input: Input
 }
 
 impl Context {
@@ -43,7 +33,10 @@ impl Context {
         renderer.clear();
         renderer.present();
 
-        Ok(Context {sdl, audio, renderer, input: Input::new()})
+        Ok(Context {
+            sdl, audio, renderer,
+            input: Input::new()
+        })
     }
 
     pub fn update_events(&mut self) {
@@ -53,19 +46,8 @@ impl Context {
                 _ => continue
             }
         }
+
         let keys: HashSet<Keycode> = events.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
-
-        self.input.new_keys = &keys - &self.input._prev_keys_state;
-        self.input.old_keys = &self.input._prev_keys_state - &keys;
-
-        self.input._prev_keys_state = keys;
-    }
-
-    pub fn is_pressed(&self, key: Keycode) -> bool {
-        self.input.new_keys.contains(&key) && !self.input.old_keys.contains(&key)
-    }
-
-    pub fn is_released(&self, key: Keycode) -> bool {
-        self.input.old_keys.contains(&key) && !self.input.new_keys.contains(&key)
+        self.input.update(&keys);
     }
 }

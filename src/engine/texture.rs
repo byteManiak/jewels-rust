@@ -8,11 +8,11 @@ pub struct TexManager<'a> {
 }
 
 impl<'a> TexManager<'a> {
-    pub fn new(creator: &'a TextureCreator<WindowContext>) -> Self {
+    pub(crate) fn new(creator: &'a TextureCreator<WindowContext>) -> Self {
         Self { loader: creator, textures: HashMap::new() }
     }
 
-    pub fn create_texture(&mut self, path: &str, name: &str) -> Result<(), String> {
+    pub(crate) fn create_texture(&mut self, path: &str, name: &str) -> Result<(), String> {
         let name_str = name.to_string();
 
         if self.textures.contains_key(&name_str) {
@@ -24,10 +24,6 @@ impl<'a> TexManager<'a> {
         self.textures.insert(name_str, texture);
 
         Ok(())
-    }
-
-    pub fn add_texture(&mut self, name: &str, texture: Texture<'a>) {
-        self.textures.insert(name.to_string(), texture);
     }
 
     pub fn get_texture(&self, name: &str) -> Option<&Texture<'a>> {

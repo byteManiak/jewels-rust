@@ -1,2 +1,6 @@
 pub mod context;
-pub mod texture;
+pub mod input;
+
+mod texture;
+mod sound;
+pub mod assets;

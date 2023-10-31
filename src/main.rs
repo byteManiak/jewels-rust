@@ -1,23 +1,19 @@
 mod game;
 mod engine;
 
-use engine::{context::Context, texture::TexManager};
-use game::game::{Game};
-use sdl2::keyboard::Keycode;
+use engine::{context::Context, assets::AssetManager};
+use game::game::Game;
 
 fn main() -> Result<(), String> {
-    let mut ctx = Context::create_ctx("bruh", 1024, 768, true)?;
-    let tc = ctx.renderer.texture_creator();
-    let mut tm = TexManager::new(&tc);
+    let mut ctx = Context::create_ctx("Jewels!", 1024, 768, true)?;
+    let texture_creator = ctx.renderer.texture_creator();
+    let mut asset_manager = AssetManager::new(&texture_creator);
 
-    let game = Game::new()?;
-
-    game.load_assets(&mut tm)?;
+    let mut game = Game::new()?;
+    game.init(&mut asset_manager)?;
 
     loop {
-        ctx.update_events();
-
-        if ctx.is_released(Keycode::Escape) {
+        if !game.update(&mut ctx, &asset_manager) {
             break;
         }
     }

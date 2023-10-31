@@ -1,5 +1,12 @@
 pub struct Board {
-    pub logoMoving: bool,
-    pub logoY: i32,
-    //gems: Vec<Gem>
+}
+
+impl Board {
+    pub(super) fn load_game(&self) {
+
+    }
+
+    pub(super) fn update(&mut self) -> bool {
+        false
+    }
 }

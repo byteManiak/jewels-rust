@@ -1,4 +1,5 @@
 use sdl2::keyboard::Keycode;
+use sdl2::pixels::Color;
 
 use crate::engine::assets::AssetManager;
 use crate::engine::context::Context;
@@ -21,6 +22,38 @@ impl<'a> Game {
     }
 
     pub fn init(&mut self, manager: &mut AssetManager<'a>) -> Result<(), String> {
+        manager.add_palette("Gold", &[
+            Color::RGBA(0x21, 0xb, 0x1b, 0xFF),
+            Color::RGBA(0x3d, 0x22, 0x3c, 0xFF),
+            Color::RGBA(0x8d, 0x65, 0x5c, 0xFF),
+            Color::RGBA(0xbf, 0xab, 0x61, 0xFF)
+        ])?;
+        manager.add_palette("Amber", &[
+            Color::RGBA(0xd, 4, 5, 0xFF),
+            Color::RGBA(0x5e, 0x12, 0x10, 0xFF),
+            Color::RGBA(0xd3, 0x56, 0, 0xFF),
+            Color::RGBA(0xfe, 0xd0, 0x18, 0xFF)
+        ])?;
+        manager.add_palette("Vboy", &[
+            Color::RGBA(0, 0, 0, 0xFF),
+            Color::RGBA(0x55, 0x22, 0x22, 0xFF),
+            Color::RGBA(0xa4, 0x44, 0x44, 0xFF),
+            Color::RGBA(0xff, 0x77, 0x77, 0xFF)
+        ])?;
+        manager.add_palette("Nymph", &[
+            Color::RGBA(0x2c, 0x21, 0x37, 0xFF),
+            Color::RGBA(0x44, 0x61, 0x76, 0xFF),
+            Color::RGBA(0x3f, 0xac, 0x95, 0xFF),
+            Color::RGBA(0xa1, 0xef, 0x8c, 0xFF)
+        ])?;
+        manager.add_palette("Blue", &[
+            Color::RGBA(0x14, 0x14, 0x44, 0xFF),
+            Color::RGBA(0x1f, 0x14, 0x88, 0xFF),
+            Color::RGBA(0x4a, 0x24, 0xcc, 0xFF),
+            Color::RGBA(0x8f, 0x66, 0xff, 0xFF)
+        ])?;
+
+        manager.set_palette("Vboy");
         manager.load_texture("assets/jewel1.pcx", "gem1")?;
         manager.load_texture("assets/jewel2.pcx", "gem2")?;
         manager.load_texture("assets/jewel3.pcx", "gem3")?;
@@ -65,7 +98,7 @@ impl<'a> Game {
             return false;
         }
 
-        manager.draw_texture(&mut ctx.renderer, "gem1", 16, 16, 32, 32);
+        manager.draw_texture(&mut ctx.renderer, "gem1", 15, 15, 30, 30, 0, 0, 15, 15);
 
         true
     }

@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use sdl2::{render::{TextureCreator, Texture}, video::WindowContext, image::LoadSurface, surface::Surface, pixels::{Palette, Color, PixelFormatEnum}};
+use sdl2::{render::{TextureCreator, Texture, TextureAccess}, video::WindowContext, image::LoadSurface, surface::Surface, pixels::{Palette, Color, PixelFormatEnum}};
 
 struct TextureData<'a> {
     pub surface: Surface<'a>,
@@ -15,9 +15,10 @@ pub struct TexManager<'a> {
 }
 
 impl<'a> TexManager<'a> {
-    pub(crate) fn new(creator: &'a TextureCreator<WindowContext>, palette: Palette) -> Self {
+    pub(crate) fn new(creator: &'a TextureCreator<WindowContext>, palette: Palette, width: u32, height: u32) -> Self {
         let mut palettes = HashMap::new();
         palettes.insert("default".to_string(), palette);
+
         Self { loader: creator, texture_data: HashMap::new(), palettes, current_palette: "default".to_string() }
     }
 
@@ -29,7 +30,8 @@ impl<'a> TexManager<'a> {
         }
 
         let mut surface = Surface::from_file(path)?;
-        surface.set_palette(&self.get_current_palette())?;
+        let palette = self.palettes.get(&self.current_palette).unwrap();
+        surface.set_palette(palette)?;
 
         let mut temp_surface = surface.convert_format(PixelFormatEnum::RGBA32)?;
         temp_surface.set_color_key(true, Color::RGBA(0xFF, 0xFF, 0xFF, 0))?;
@@ -48,12 +50,21 @@ impl<'a> TexManager<'a> {
         }
     }
 
-    pub fn add_palette(&mut self, name: &str, palette: Palette) {
-        self.palettes.insert(name.to_string(), palette);
+    pub fn update_textures(&mut self) -> Result<(), String> {
+        for tex_data in self.texture_data.values_mut() {
+            let mut surface = &mut tex_data.surface;
+            let palette = self.palettes.get(&self.current_palette).unwrap();
+            surface.set_palette(palette)?;
+            let mut temp_surface = surface.convert_format(PixelFormatEnum::RGBA32)?;
+            temp_surface.set_color_key(true, Color::RGBA(0xFF, 0xFF, 0xFF, 0))?;
+            tex_data.texture = temp_surface.as_texture(self.loader).map_err(|e| e.to_string())?;
+        }
+
+        Ok(())
     }
 
-    fn get_current_palette(&self) -> &Palette {
-        self.palettes.get(&self.current_palette).unwrap()
+    pub fn add_palette(&mut self, name: &str, palette: Palette) {
+        self.palettes.insert(name.to_string(), palette);
     }
 
     pub fn set_palette(&mut self, name: &str) {

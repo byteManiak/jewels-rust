@@ -1,9 +1,13 @@
+use rand::Rng;
 use sdl2::keyboard::Keycode;
 
 use crate::engine::assets::{AssetManager, u32_palette};
 use crate::engine::context::Context;
 use crate::game::mainmenu::MainMenu;
 use crate::game::board::Board;
+
+pub const XRES: u32 = 160;
+pub const YRES: u32 = 144;
 
 pub struct Game {
     mainmenu: Option<MainMenu>,
@@ -38,6 +42,9 @@ impl<'a> Game {
         manager.load_texture("assets/barholder.pcx", "barholder")?;
         manager.load_texture("assets/bar.pcx", "bar")?;
         manager.load_texture("assets/bardesc.pcx", "bardesc")?;
+
+        manager.set_palette("Amber");
+        manager.update_textures()?;
 
         for f in 0..=7 {
             manager.load_sound(format!("assets/combo{:?}.wav", f).as_str(), format!("combo{:?}", f).as_str())?;
@@ -76,7 +83,8 @@ impl<'a> Game {
             return false;
         }
 
-        manager.draw_texture(&mut ctx.renderer, "gem1", 15, 15, 30, 30, 0, 0, 15, 15);
+        let r = rand::thread_rng().gen_range(1..=7);
+        manager.draw_texture(&mut ctx.renderer, format!("gem{:?}", r).as_str(), 15, 15, 15, 15, 0, 0, 15, 15);
 
         true
     }

@@ -1,4 +1,4 @@
-use sdl2::{render::{TextureCreator, WindowCanvas}, video::WindowContext, mixer::Channel, pixels::{Palette, Color}, rect::Rect};
+use sdl2::{render::{TextureCreator, WindowCanvas, Texture}, video::WindowContext, mixer::Channel, pixels::{Palette, Color, PixelFormatEnum}, rect::Rect};
 
 use super::{sound::SoundManager, texture::TexManager};
 
@@ -37,8 +37,8 @@ pub fn u32_palette(c1: u32, c2: u32, c3: u32, c4:u32) -> Palette {
 }
 
 impl<'a> AssetManager<'a> {
-    pub fn new(texture_creator: &'a TextureCreator<WindowContext>, palette: Palette) -> Self {
-        let tex_manager = TexManager::new(texture_creator, palette);
+    pub fn new(texture_creator: &'a TextureCreator<WindowContext>, palette: Palette, width: u32, height: u32) -> Self {
+        let tex_manager = TexManager::new(texture_creator, palette, width, height);
         let snd_manager = SoundManager::new();
         Self {tex_manager, snd_manager}
     }
@@ -84,5 +84,9 @@ impl<'a> AssetManager<'a> {
 
     pub fn play_music(&self) {
         self.snd_manager.play_music()
+    }
+
+    pub fn update_textures(&mut self) -> Result<(), String> {
+        self.tex_manager.update_textures()
     }
 }

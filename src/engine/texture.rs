@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use sdl2::{render::{TextureCreator, Texture, TextureAccess}, video::WindowContext, image::LoadSurface, surface::Surface, pixels::{Palette, Color, PixelFormatEnum}};
+use sdl2::{render::{TextureCreator, Texture}, video::WindowContext, image::LoadSurface, surface::Surface, pixels::{Palette, Color, PixelFormatEnum}};
 
 struct TextureData<'a> {
     pub surface: Surface<'a>,
@@ -15,7 +15,7 @@ pub struct TexManager<'a> {
 }
 
 impl<'a> TexManager<'a> {
-    pub(crate) fn new(creator: &'a TextureCreator<WindowContext>, palette: Palette, width: u32, height: u32) -> Self {
+    pub(crate) fn new(creator: &'a TextureCreator<WindowContext>, palette: Palette) -> Self {
         let mut palettes = HashMap::new();
         palettes.insert("default".to_string(), palette);
 
@@ -35,7 +35,7 @@ impl<'a> TexManager<'a> {
 
         let mut temp_surface = surface.convert_format(PixelFormatEnum::RGBA32)?;
         temp_surface.set_color_key(true, Color::RGBA(0xFF, 0xFF, 0xFF, 0))?;
-        let texture = temp_surface.as_texture(&self.loader).map_err(|e| e.to_string())?;
+        let texture = temp_surface.as_texture(self.loader).map_err(|e| e.to_string())?;
 
         self.texture_data.insert(name_str.clone(), TextureData { surface, texture });
 
@@ -44,15 +44,15 @@ impl<'a> TexManager<'a> {
 
     pub fn get_texture(&self, name: &str) -> Option<&Texture<'a>> {
         if let Some(data) = self.texture_data.get(name) {
-            return Some(&data.texture);
+            Some(&data.texture)
         } else {
-            return None;
+            None
         }
     }
 
     pub fn update_textures(&mut self) -> Result<(), String> {
         for tex_data in self.texture_data.values_mut() {
-            let mut surface = &mut tex_data.surface;
+            let surface = &mut tex_data.surface;
             let palette = self.palettes.get(&self.current_palette).unwrap();
             surface.set_palette(palette)?;
             let mut temp_surface = surface.convert_format(PixelFormatEnum::RGBA32)?;

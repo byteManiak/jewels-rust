@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use sdl2::{Sdl, render::{WindowCanvas, Texture, TextureAccess}, mixer::{AUDIO_S16LSB, InitFlag, Sdl2MixerContext}, keyboard::Keycode, pixels::{Color, PixelFormat, PixelFormatEnum}};
+use sdl2::{Sdl, render::WindowCanvas, mixer::{AUDIO_S16LSB, InitFlag, Sdl2MixerContext}, keyboard::Keycode};
 
 use super::input::Input;
 

@@ -34,11 +34,9 @@ impl MainMenu {
             if input.is_pressed(Keycode::Return) {
                 self.logo_moving = false;
             }
-        } else {
-            if input.is_pressed(Keycode::Return) {
-                manager.stop_sound(self.sound_channel);
-                ret = true;
-            }
+        } else if input.is_pressed(Keycode::Return) {
+            manager.stop_sound(self.sound_channel);
+            ret = true;
         }
 
         ret

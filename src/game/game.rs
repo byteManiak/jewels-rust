@@ -68,15 +68,13 @@ impl<'a> Game {
         ctx.update_events();
 
         if self.in_menu {
-            if mainmenu.update(&ctx.input, &manager) {
+            if mainmenu.update(&ctx.input, manager) {
                 self.in_menu = false;
                 board.load_game();
                 manager.play_music();
             }
-        } else {
-            if board.update() {
-                return false;
-            }
+        } else if board.update() {
+            return false;
         }
 
         if ctx.input.is_released(Keycode::Escape) {

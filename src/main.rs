@@ -1,23 +1,16 @@
 mod game;
 mod engine;
 
-use engine::{context::Context, assets::AssetManager};
+use engine::{context::Context, assets::{AssetManager, u32_palette}};
 use game::game::Game;
-use sdl2::pixels::{Palette, Color};
+use sdl2::pixels::Color;
 
 fn main() -> Result<(), String> {
     let mut ctx = Context::create_ctx("Jewels!", 1024, 768, true)?;
     let texture_creator = ctx.renderer.texture_creator();
     let mut asset_manager = AssetManager::new(
         &texture_creator,
-        Palette::with_colors(&[
-            Color::RGBA(5, 5, 0, 0xFF),
-            Color::RGBA(3, 0x38, 0x22, 0xFF),
-            Color::RGBA(0x3e, 0x95, 0x33, 0xFF),
-            Color::RGBA(0xd4, 0xf0, 0x44, 0xFF),
-            Color::RGBA(0xFF, 0xFF, 0xFF, 0),
-
-        ])?
+        u32_palette(0x050500, 0x033822, 0x3e9533, 0xd4f044)?
     );
 
     let mut game = Game::new()?;

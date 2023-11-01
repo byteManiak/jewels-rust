@@ -7,6 +7,35 @@ pub struct AssetManager<'a> {
     snd_manager: SoundManager
 }
 
+pub fn u32_palette(c1: u32, c2: u32, c3: u32, c4:u32) -> Palette {
+    let color1 = Color::RGBA(
+        ((c1 & 0xFF0000) >> 16) as u8,
+        ((c1 & 0xFF00) >> 8) as u8,
+        ((c1 & 0xFF)) as u8,
+        0,
+    );
+    let color2 = Color::RGBA(
+        ((c2 & 0xFF0000) >> 16) as u8,
+        ((c2 & 0xFF00) >> 8) as u8,
+        ((c2 & 0xFF)) as u8,
+        0,
+    );
+    let color3 = Color::RGBA(
+        ((c3 & 0xFF0000) >> 16) as u8,
+        ((c3 & 0xFF00) >> 8) as u8,
+        ((c3 & 0xFF)) as u8,
+        0,
+    );
+    let color4 = Color::RGBA(
+        ((c4 & 0xFF0000) >> 16) as u8,
+        ((c4 & 0xFF00) >> 8) as u8,
+        ((c4 & 0xFF)) as u8,
+        0,
+    );
+
+    Palette::with_colors(&[color1, color2, color3, color4]).unwrap()
+}
+
 impl<'a> AssetManager<'a> {
     pub fn new(texture_creator: &'a TextureCreator<WindowContext>, palette: Palette) -> Self {
         let tex_manager = TexManager::new(texture_creator, palette);
@@ -41,8 +70,8 @@ impl<'a> AssetManager<'a> {
         }
     }
 
-    pub fn add_palette(&mut self, name: &str, colors: &[Color; 4]) -> Result<(), String> {
-        self.tex_manager.add_palette(name, colors)
+    pub fn add_palette(&mut self, name: &str, palette: Palette) {
+        self.tex_manager.add_palette(name, palette)
     }
 
     pub fn set_palette(&mut self, name: &str) {

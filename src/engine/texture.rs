@@ -48,13 +48,8 @@ impl<'a> TexManager<'a> {
         }
     }
 
-    pub fn add_palette(&mut self, name: &str, colors: &[Color; 4]) -> Result<(), String> {
-        self.palettes.insert(
-            name.to_string(),
-            Palette::with_colors(&[colors[0], colors[1], colors[2], colors[3], Color::RGBA(0xFF, 0xFF, 0xFF, 0)])?
-        );
-
-        Ok(())
+    pub fn add_palette(&mut self, name: &str, palette: Palette) {
+        self.palettes.insert(name.to_string(), palette);
     }
 
     fn get_current_palette(&self) -> &Palette {

@@ -43,6 +43,10 @@ impl<'a> Game {
             manager.load_sound(format!("assets/combo{:?}.wav", f).as_str(), format!("combo{:?}", f).as_str())?;
         }
         manager.load_sound("assets/intro.wav", "intro")?;
+        manager.load_sound("assets/levelup.wav", "levelup")?;
+        manager.load_sound("assets/gameover.wav", "gameover")?;
+
+        manager.load_music("assets/music.wav");
 
         self.mainmenu = Some(MainMenu::new(manager));
         self.board = Some(Board {  });
@@ -60,6 +64,7 @@ impl<'a> Game {
             if mainmenu.update(&ctx.input, &manager) {
                 self.in_menu = false;
                 board.load_game();
+                manager.play_music();
             }
         } else {
             if board.update() {

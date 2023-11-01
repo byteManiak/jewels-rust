@@ -4,7 +4,7 @@ use super::{sound::SoundManager, texture::TexManager};
 
 pub struct AssetManager<'a> {
     tex_manager: TexManager<'a>,
-    snd_manager: SoundManager
+    snd_manager: SoundManager<'a>
 }
 
 pub fn u32_palette(c1: u32, c2: u32, c3: u32, c4:u32) -> Palette {
@@ -76,5 +76,13 @@ impl<'a> AssetManager<'a> {
 
     pub fn set_palette(&mut self, name: &str) {
         self.tex_manager.set_palette(name);
+    }
+
+    pub fn load_music(&mut self, path: &str) {
+        self.snd_manager.load_music(path)
+    }
+
+    pub fn play_music(&self) {
+        self.snd_manager.play_music()
     }
 }

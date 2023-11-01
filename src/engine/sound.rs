@@ -1,15 +1,17 @@
 use std::collections::HashMap;
 
-use sdl2::mixer::{Chunk, Channel};
+use sdl2::mixer::{Chunk, Channel, Music};
 
-pub struct SoundManager {
-    sounds: HashMap<String, Chunk>
+pub struct SoundManager<'a> {
+    sounds: HashMap<String, Chunk>,
+    music: Option<Music<'a>>
 }
 
-impl SoundManager {
+impl<'a> SoundManager<'a> {
     pub(crate) fn new() -> Self {
-        Self {sounds: HashMap::new()}
+        Self {sounds: HashMap::new(), music: None}
     }
+
     pub(crate) fn load_sound(&mut self, path: &str, name: &str) -> Result<(), String> {
         let sound = Chunk::from_file(path)?;
         self.sounds.insert(name.to_string(), sound);
@@ -17,7 +19,7 @@ impl SoundManager {
         Ok(())
     }
 
-    pub fn play_sound(&self, name: &str) -> Result<Channel, String> {
+    pub(crate) fn play_sound(&self, name: &str) -> Result<Channel, String> {
         let name_str = name.to_string();
 
         if !self.sounds.contains_key(&name_str) {
@@ -30,7 +32,20 @@ impl SoundManager {
         Ok(channel)
     }
 
-    pub fn stop_sound(&self, channel: Channel) {
+    pub(crate) fn stop_sound(&self, channel: Channel) {
         sdl2::mixer::Channel::halt(channel);
+    }
+
+    pub(crate) fn load_music(&mut self, path: &str) {
+        let music = Music::from_file(path);
+        if let Ok(mus) = music {
+            self.music = Some(mus);
+        }
+    }
+
+    pub(crate) fn play_music(&self) {
+        if let Some(music) = &self.music {
+            let _ = music.play(-1);
+        }
     }
 }

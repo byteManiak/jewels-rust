@@ -10,7 +10,7 @@ fn main() -> Result<(), String> {
     let texture_creator = ctx.renderer.texture_creator();
     let mut asset_manager = AssetManager::new(
         &texture_creator,
-        u32_palette(0x050500, 0x033822, 0x3e9533, 0xd4f044)?
+        u32_palette(0x050500, 0x033822, 0x3e9533, 0xd4f044)
     );
 
     let mut game = Game::new()?;

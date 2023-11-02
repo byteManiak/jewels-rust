@@ -56,7 +56,6 @@ pub struct MainMenu {
 impl MainMenu {
     pub(crate) fn new(manager: &AssetManager) -> Self {
         let channel = manager.play_sound("intro").unwrap();
-        manager.stop_sound(channel);
 
         Self {
             start_tick: Instant::now(),

@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use sdl2::{Sdl, render::WindowCanvas, mixer::{AUDIO_S16LSB, InitFlag}, keyboard::Keycode};
+use sdl2::{Sdl, render::WindowCanvas, mixer::{AUDIO_S16LSB, InitFlag}, keyboard::Keycode, mouse::MouseButton, event::Event};
 
 use super::input::Input;
 
@@ -37,13 +37,18 @@ impl Context {
 
     pub fn update_events(&mut self) {
         let mut events = self.sdl.event_pump().unwrap();
+
         for event in events.poll_iter() {
             match event {
+                Event::MouseMotion { timestamp, window_id, which, mousestate, x, y, xrel, yrel } => {
+                    self.input.update_mouse_coords((x, y));
+                }
                 _ => continue
             }
         }
 
         let keys: HashSet<Keycode> = events.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
-        self.input.update(&keys);
+        let mouse_buttons: HashSet<MouseButton> = events.mouse_state().pressed_mouse_buttons().collect();
+        self.input.update(&keys, &mouse_buttons);
     }
 }

@@ -64,9 +64,9 @@ impl<'a> AssetManager<'a> {
         x: i32, y: i32, w: u32, h: u32,
         sx: i32, sy: i32, sw: u32, sh: u32) {
         if let Some(tex) = self.tex_manager.get_texture(name) {
-            let src = Rect::new(sx, sy, sw, sh);
+            let src = if sx == 0 && sy == 0 && sw == 0 && sh == 0 {None} else {Some(Rect::new(sx, sy, sw, sh))} ;
             let dst = Rect::new(x, y, w, h);
-            renderer.copy(tex, Some(src), Some(dst)).unwrap();
+            renderer.copy(tex, src, Some(dst)).unwrap();
         }
     }
 

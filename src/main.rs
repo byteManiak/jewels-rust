@@ -19,7 +19,7 @@ fn main() -> Result<(), String> {
     loop {
         ctx.renderer.set_draw_color(Color::RGBA(0, 0, 0, 0));
         ctx.renderer.clear();
-        ctx.renderer.set_draw_color(Color::RGBA(0xd5, 0xf0, 0x44, 0));
+        ctx.renderer.set_draw_color(Color::RGBA(0x3e, 0x95, 0x33, 0));
         ctx.renderer.fill_rect(Rect::new(0, 0, XRES, YRES))?;
 
         asset_manager.update_textures()?;
@@ -27,6 +27,7 @@ fn main() -> Result<(), String> {
         if !game.update(&mut ctx, &asset_manager) {
             break;
         }
+
         ctx.renderer.present();
     }
     Ok(())

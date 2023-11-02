@@ -16,7 +16,7 @@ pub struct Game {
     in_menu: bool
 }
 
-impl<'a> Game {
+impl Game {
     pub fn new() -> Result<Self, String> {
 
         Ok(Self {
@@ -25,7 +25,7 @@ impl<'a> Game {
             in_menu: true})
     }
 
-    pub fn init(&mut self, manager: &mut AssetManager<'a>) -> Result<(), String> {
+    pub fn init(&mut self, manager: &mut AssetManager) -> Result<(), String> {
         manager.add_palette("Gold",  u32_palette(0x210b1b, 0x3d223c, 0x8d655c, 0xbfab61));
         manager.add_palette("Amber", u32_palette(0x0d0405, 0x5e1210, 0xd35600, 0xfed018));
         manager.add_palette("Vboy",  u32_palette(0x000000, 0x552222, 0xa44444, 0xff7777));
@@ -56,7 +56,7 @@ impl<'a> Game {
         manager.load_music("assets/music.wav");
 
         self.mainmenu = Some(MainMenu::new(manager));
-        self.board = Some(Board {  });
+        self.board = Some(Board::new());
 
         Ok(())
     }
@@ -70,14 +70,10 @@ impl<'a> Game {
         if self.in_menu {
             if mainmenu.update(&ctx.input, manager, &mut ctx.renderer) {
                 self.in_menu = false;
-                board.load_game();
+                board.new_game();
                 manager.play_music();
             }
-        } else if board.update() {
-            return false;
-        }
-
-        if ctx.input.is_released(Keycode::Escape) {
+        } else if board.update(&ctx.input, manager, &mut ctx.renderer) {
             return false;
         }
 

@@ -4,6 +4,7 @@ use sdl2::render::WindowCanvas;
 
 use super::assets::AssetManager;
 
+#[derive(Clone)]
 pub struct Sprite {
     tile_w: u32,
     tile_h: u32,
@@ -30,6 +31,22 @@ impl Sprite {
             x, y, self.tile_w, self.tile_h,
             (self.tile_w*self.current_tile) as i32, 0, self.tile_w, self.tile_h
         );
+    }
+
+    pub fn draw_tile(&self, manager: &AssetManager, renderer: &mut WindowCanvas, x: i32, y: i32, tile: i32) {
+        if tile == -1 {
+            manager.draw_texture(
+                renderer, &self.texture,
+                x, y, self.tile_w, self.tile_h,
+                (self.current_tile*self.tile_w) as i32, 0, self.tile_w, self.tile_h
+            );
+        } else {
+            manager.draw_texture(
+                renderer, &self.texture,
+                x, y, self.tile_w, self.tile_h,
+                tile*(self.tile_w as i32), 0, self.tile_w, self.tile_h
+            );
+        }
     }
 
     pub fn set_sprite(&mut self, name: &str) {

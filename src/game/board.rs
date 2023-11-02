@@ -5,7 +5,7 @@ use sdl2::{keyboard::Keycode, mouse::MouseButton, render::WindowCanvas, rect::Re
 
 use crate::engine::{input::Input, assets::AssetManager};
 
-use super::{gem::Gem, progressgem::ProgressGem, bar::Bar, pause::{PauseMenu, PauseReturn}};
+use super::{gem::Gem, progressgem::ProgressGem, bar::Bar, pause::{PauseMenu, PauseReturn}, score::Score};
 
 pub(crate) const BASEX: i32 = 30;
 pub(crate) const BASEY: i32 = 1;
@@ -39,7 +39,8 @@ pub struct Board {
     combo: i8,
     progress_gems: Vec<ProgressGem>,
     bar: Bar,
-    pause_menu: PauseMenu
+    pause_menu: PauseMenu,
+    score: Score
 }
 
 const LEFT: i32 = 0;
@@ -60,12 +61,15 @@ impl Board {
             x1swap: 0, y1swap: 0, x2swap: 0, y2swap: 0,
             gems: vec![vec![default_gem; 8]; 8],
             wait_tick: Instant::now(), combo: 0,
-            progress_gems: Vec::new(), bar: Bar::new(), pause_menu: PauseMenu::new()
+            progress_gems: Vec::new(), bar: Bar::new(),
+            pause_menu: PauseMenu::new(), score: Score::new()
         }
     }
 
     pub(super) fn new_game(&mut self) {
         self.gen_board();
+        self.score.reset();
+        self.bar.reset();
         self.gameover = false;
     }
 
@@ -336,6 +340,7 @@ impl Board {
             }
         }
 
+        self.score.draw(manager, renderer);
         self.bar.draw(manager, renderer);
 
         for gem in &mut self.progress_gems {
@@ -344,6 +349,7 @@ impl Board {
                 self.bar.add_progress();
                 if self.bar.start_level {
                     self.bar.start_level = false;
+                    self.score.increase_level();
                     manager.play_sound("levelup");
                     manager.set_next_palette();
                 }
@@ -424,6 +430,8 @@ impl Board {
 
                     self.short_wait = true;
                     self.wait_tick = Instant::now();
+
+                    self.score.add_score(self.combo as u32+1);
                 }
             }
         }

@@ -1,4 +1,5 @@
 use sdl2::keyboard::Keycode;
+use sdl2::pixels::Color;
 
 use crate::engine::assets::{AssetManager, u32_palette};
 use crate::engine::context::Context;
@@ -26,11 +27,11 @@ impl Game {
     }
 
     pub fn init(&mut self, manager: &mut AssetManager) -> Result<(), String> {
-        manager.add_palette("Gold",  u32_palette(0x210b1b, 0x3d223c, 0x8d655c, 0xbfab61));
-        manager.add_palette("Amber", u32_palette(0x0d0405, 0x5e1210, 0xd35600, 0xfed018));
-        manager.add_palette("Vboy",  u32_palette(0x000000, 0x552222, 0xa44444, 0xff7777));
-        manager.add_palette("Nymph", u32_palette(0x2c2137, 0x446176, 0x3fac95, 0xa1ef8c));
-        manager.add_palette("Blue",  u32_palette(0x141444, 0x1f1488, 0x4a24cc, 0x8f66ff));
+        manager.add_palette(u32_palette(0x210b1b, 0x3d223c, 0x8d655c, 0xbfab61));
+        manager.add_palette(u32_palette(0x0d0405, 0x5e1210, 0xd35600, 0xfed018));
+        manager.add_palette(u32_palette(0x000000, 0x552222, 0xa44444, 0xff7777));
+        manager.add_palette(u32_palette(0x2c2137, 0x446176, 0x3fac95, 0xa1ef8c));
+        manager.add_palette(u32_palette(0x141444, 0x1f1488, 0x4a24cc, 0x8f66ff));
 
         manager.load_texture("assets/jewel1.pcx", "gem1")?;
         manager.load_texture("assets/jewel2.pcx", "gem2")?;
@@ -61,11 +62,16 @@ impl Game {
         Ok(())
     }
 
-    pub fn update(&mut self, ctx: &mut Context, manager: &AssetManager) -> bool{
+    pub fn update(&mut self, ctx: &mut Context, manager: &mut AssetManager) -> bool{
         let mainmenu = self.mainmenu.as_mut().unwrap();
         let board = self.board.as_mut().unwrap();
 
         ctx.update_events();
+
+        ctx.renderer.set_draw_color(Color::RGBA(0, 0, 0, 0));
+        ctx.renderer.clear();
+
+        manager.draw_rectangle(&mut ctx.renderer, 0, 0, XRES, YRES, 2, true);
 
         if self.in_menu {
             if mainmenu.update(&ctx.input, manager, &mut ctx.renderer) {

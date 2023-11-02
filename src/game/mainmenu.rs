@@ -56,6 +56,7 @@ pub struct MainMenu {
 impl MainMenu {
     pub(crate) fn new(manager: &AssetManager) -> Self {
         let channel = manager.play_sound("intro").unwrap();
+        manager.stop_sound(channel);
 
         Self {
             start_tick: Instant::now(),
@@ -88,6 +89,9 @@ impl MainMenu {
                 manager.stop_sound(self.sound_channel);
                 ret = true;
             }
+
+            manager.draw_text(renderer, "a game by bytemaniak", 6, 1);
+            manager.draw_text(renderer, "press enter to play", 10, 100);
         }
 
         manager.draw_texture(
@@ -98,6 +102,7 @@ impl MainMenu {
         for tex in self.gems.iter_mut() {
             tex.update(manager, renderer);
         }
+
         ret
     }
 }

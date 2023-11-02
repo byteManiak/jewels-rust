@@ -5,7 +5,7 @@ use sdl2::{keyboard::Keycode, mouse::MouseButton, render::WindowCanvas, rect::Re
 
 use crate::engine::{input::Input, assets::AssetManager};
 
-use super::{gem::Gem, progressgem::ProgressGem, bar::Bar};
+use super::{gem::Gem, progressgem::ProgressGem, bar::Bar, pause::{PauseMenu, PauseReturn}};
 
 pub(crate) const BASEX: i32 = 30;
 pub(crate) const BASEY: i32 = 1;
@@ -38,7 +38,8 @@ pub struct Board {
     wait_tick: Instant,
     combo: i8,
     progress_gems: Vec<ProgressGem>,
-    bar: Bar
+    bar: Bar,
+    pause_menu: PauseMenu
 }
 
 const LEFT: i32 = 0;
@@ -59,7 +60,7 @@ impl Board {
             x1swap: 0, y1swap: 0, x2swap: 0, y2swap: 0,
             gems: vec![vec![default_gem; 8]; 8],
             wait_tick: Instant::now(), combo: 0,
-            progress_gems: Vec::new(), bar: Bar::new()
+            progress_gems: Vec::new(), bar: Bar::new(), pause_menu: PauseMenu::new()
         }
     }
 
@@ -228,14 +229,14 @@ impl Board {
         }
     }
 
-    pub(super) fn update(&mut self, input: &Input, manager: &AssetManager, renderer: &mut WindowCanvas) -> bool {
+    pub(super) fn update(&mut self, input: &Input, manager: &mut AssetManager, renderer: &mut WindowCanvas) -> bool {
         (self.mouse_x, self.mouse_y) = input.get_mouse_coords();
 
         if self.gameover {
-            // TODO: manager.pause_music();
+            manager.pause_music();
             if input.is_pressed(Keycode::Return) {
                 self.new_game();
-                // TODO: manager.resume_music();
+                manager.resume_music();
             }
         } else if self.is_paused {
             if input.is_pressed(Keycode::Escape) {
@@ -273,11 +274,12 @@ impl Board {
             for j in 0..8 {
                 let gem = &mut self.gems[i as usize][j as usize];
 
-                renderer.set_draw_color(Color::RGBA(3, 0x38, 0x22, 0));
-                renderer.draw_rect(Rect::new(BASEX+i*16, BASEY+j*16, 17, 17));
+                manager.draw_rectangle(renderer, BASEX+i*16, BASEY+j*16, 17, 17, 1, false);
+
                 if self.x_cursor == i && self.y_cursor == j {
-                    // TODO: rect palette color
-                    renderer.fill_rect(Rect::new(BASEX+i*16+1, BASEY+j*16+1, 15, 15));
+                    let color = if self.is_selecting {3} else {1};
+                    manager.draw_rectangle(renderer, BASEX+i*16+1, BASEY+j*16+1, 15, 15, color, true);
+
                     if gem.gem_type != NO_GEM {
                         gem.draw(true, renderer, manager);
                         if gem.is_moving {
@@ -307,8 +309,7 @@ impl Board {
                     for j in 0..8 {
                         let gem = &mut self.gems[i as usize][j as usize];
                         if gem.is_matched {
-                            // TODO: rect palette color
-                            renderer.fill_rect(Rect::new(BASEX+i*16+1, BASEY+j*16+1, 15, 15));
+                            manager.draw_rectangle(renderer, BASEX+i*16+1, BASEY+j*16+1, 15, 15, 3, true);
                             gem.draw(true, renderer, manager);
                         }
                     }
@@ -344,11 +345,29 @@ impl Board {
                 if self.bar.start_level {
                     self.bar.start_level = false;
                     manager.play_sound("levelup");
+                    manager.set_next_palette();
                 }
             }
         }
-
         self.progress_gems.retain(|gem|{!gem.reached});
+
+        if self.gameover {
+            manager.draw_rectangle(renderer, 0, 63, 160, 1, 1, true);
+            manager.draw_rectangle(renderer, 0, 64, 160, 25, 2, true);
+            manager.draw_rectangle(renderer, 0, 88, 160, 1, 1, true);
+            manager.draw_text(renderer, "game over", 48, 67);
+            manager.draw_text(renderer, "press enter to reset", 1, 75);
+        }
+
+        if self.is_paused {
+            let ret = self.pause_menu.update(renderer, manager, input);
+            if ret == PauseReturn::NewGame {
+                self.new_game();
+                self.is_paused = false;
+            } else if ret == PauseReturn::Quit {
+                return true;
+            }
+        }
 
         false
     }

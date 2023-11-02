@@ -18,6 +18,7 @@ impl Context {
         sdl2::mixer::open_audio(44100, AUDIO_S16LSB, 2, 4096)?;
         let _ = sdl2::mixer::init(InitFlag::MP3)?;
         sdl2::mixer::allocate_channels(8);
+        sdl2::mixer::Music::set_volume(48);
 
         let mut window = sdl.video()?.window(title, width*3, height*3).resizable().build().map_err(|e| e.to_string())?;
         window.show();

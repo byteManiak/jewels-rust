@@ -48,4 +48,31 @@ impl<'a> SoundManager<'a> {
             let _ = music.play(-1);
         }
     }
+
+    pub(crate) fn pause_music(&self) {
+        sdl2::mixer::Music::pause();
+    }
+
+    pub(crate) fn resume_music(&self) {
+        sdl2::mixer::Music::rewind();
+        sdl2::mixer::Music::resume();
+    }
+
+    pub(crate) fn mute_music(&self, mute: bool) {
+        if mute {
+            sdl2::mixer::Music::set_volume(0);
+        } else {
+            sdl2::mixer::Music::set_volume(48);
+        }
+    }
+
+    pub(crate) fn mute_sounds(&mut self, mute: bool) {
+        for chunk in self.sounds.values_mut() {
+            if mute {
+                chunk.set_volume(0);
+            } else {
+                chunk.set_volume(128);
+            }
+        }
+    }
 }

@@ -2,8 +2,11 @@ pub struct Board {
 }
 
 impl Board {
-    pub(super) fn load_game(&self) {
+    fn new_game(&mut self) {
+    }
 
+    pub(super) fn load_game(&mut self) {
+        self.new_game();
     }
 
     pub(super) fn update(&mut self) -> bool {

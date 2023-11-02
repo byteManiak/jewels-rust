@@ -1,4 +1,3 @@
-use rand::Rng;
 use sdl2::keyboard::Keycode;
 
 use crate::engine::assets::{AssetManager, u32_palette};
@@ -8,6 +7,8 @@ use crate::game::board::Board;
 
 pub const XRES: u32 = 160;
 pub const YRES: u32 = 144;
+pub const XCENTRE: i32 = XRES as i32/2;
+pub const YCENTRE: i32 = YRES as i32/2;
 
 pub struct Game {
     mainmenu: Option<MainMenu>,
@@ -43,7 +44,6 @@ impl<'a> Game {
         manager.load_texture("assets/bar.pcx", "bar")?;
         manager.load_texture("assets/bardesc.pcx", "bardesc")?;
 
-        manager.set_palette("Amber");
         manager.update_textures()?;
 
         for f in 0..=7 {
@@ -68,7 +68,7 @@ impl<'a> Game {
         ctx.update_events();
 
         if self.in_menu {
-            if mainmenu.update(&ctx.input, manager) {
+            if mainmenu.update(&ctx.input, manager, &mut ctx.renderer) {
                 self.in_menu = false;
                 board.load_game();
                 manager.play_music();
@@ -80,9 +80,6 @@ impl<'a> Game {
         if ctx.input.is_released(Keycode::Escape) {
             return false;
         }
-
-        let r = rand::thread_rng().gen_range(1..=7);
-        manager.draw_texture(&mut ctx.renderer, format!("gem{:?}", r).as_str(), 15, 15, 15, 15, 0, 0, 15, 15);
 
         true
     }

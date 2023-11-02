@@ -1,13 +1,12 @@
 use std::collections::HashSet;
 
-use sdl2::{Sdl, render::WindowCanvas, mixer::{AUDIO_S16LSB, InitFlag, Sdl2MixerContext}, keyboard::Keycode};
+use sdl2::{Sdl, render::WindowCanvas, mixer::{AUDIO_S16LSB, InitFlag}, keyboard::Keycode};
 
 use super::input::Input;
 
 pub struct Context {
     pub sdl: Sdl,
     pub renderer: WindowCanvas,
-    pub audio: Sdl2MixerContext,
 
     pub input: Input
 }
@@ -17,7 +16,7 @@ impl Context {
         let sdl = sdl2::init()?;
 
         sdl2::mixer::open_audio(44100, AUDIO_S16LSB, 2, 4096)?;
-        let audio = sdl2::mixer::init(InitFlag::MP3)?;
+        let _ = sdl2::mixer::init(InitFlag::MP3)?;
         sdl2::mixer::allocate_channels(8);
 
         let mut window = sdl.video()?.window(title, width*3, height*3).resizable().build().map_err(|e| e.to_string())?;
@@ -33,10 +32,7 @@ impl Context {
         renderer.clear();
         renderer.present();
 
-        Ok(Context {
-            sdl, audio, renderer,
-            input: Input::new()
-        })
+        Ok(Context { sdl, renderer, input: Input::new() })
     }
 
     pub fn update_events(&mut self) {

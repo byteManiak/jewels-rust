@@ -7,6 +7,9 @@ edition = "2021"
 name = "jewels-rust"
 path = "src/main.rs"
 
+[dependencies]
+rand = "0.8.5"
+
 [dependencies.sdl2]
 version = "0.35.2"
-features = ["image", "mixer"]
+features = ["image", "mixer", "ttf"]

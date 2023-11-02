@@ -1,4 +1,4 @@
-use sdl2::{render::{TextureCreator, WindowCanvas}, video::WindowContext, mixer::Channel, pixels::{Palette, Color}, rect::Rect};
+use sdl2::{render::{TextureCreator, WindowCanvas}, video::WindowContext, pixels::{Palette, Color}, rect::Rect, mixer::Channel};
 
 use super::{sound::SoundManager, texture::TexManager};
 

@@ -54,7 +54,7 @@ impl Game {
         manager.load_sound("assets/levelup.wav", "levelup")?;
         manager.load_sound("assets/gameover.wav", "gameover")?;
 
-        manager.load_music("assets/bejeweled.mp3");
+        manager.load_music("assets/music.wav");
 
         self.mainmenu = Some(MainMenu::new(manager));
         self.board = Some(Board::new());

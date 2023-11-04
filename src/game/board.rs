@@ -454,9 +454,9 @@ impl Board {
                         if occurences[k as usize -1] >= 3 {
                             self.gameover = false;
                             return;
-                        } else {
-                            occurences[k as usize -1] = 0;
                         }
+                    } else {
+                        occurences[k as usize -1] = 0;
                     }
                 }
             }
@@ -471,9 +471,9 @@ impl Board {
                         if occurences[k as usize -1] >= 3 {
                             self.gameover = false;
                             return;
-                        } else {
-                            occurences[k as usize -1] = 0;
                         }
+                    } else {
+                        occurences[k as usize -1] = 0;
                     }
                 }
             }

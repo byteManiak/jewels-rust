@@ -24,7 +24,7 @@ impl PauseMenu {
         Self {menu_cursor: 0, sound_muted: false, music_muted: false}
     }
 
-    pub fn update(&mut self, renderer: &mut WindowCanvas, manager: &mut AssetManager, input: &Input) -> PauseReturn {
+    pub fn update(&mut self, manager: &mut AssetManager, input: &Input) -> PauseReturn {
         if input.is_pressed(Keycode::Down) {
             self.menu_cursor += 1;
         }
@@ -51,22 +51,22 @@ impl PauseMenu {
             }
         }
 
-        manager.draw_rectangle(renderer, 0, PAUSEY-2, 160, 1, 1, true);
-        manager.draw_rectangle(renderer, 0, PAUSEY-1, 160, 49, 2, true);
-        manager.draw_rectangle(renderer, 0, PAUSEY+47, 160, 1, 1, true);
+        manager.draw_rectangle(0, PAUSEY-2, 160, 1, 1, true);
+        manager.draw_rectangle(0, PAUSEY-1, 160, 49, 2, true);
+        manager.draw_rectangle(0, PAUSEY+47, 160, 1, 1, true);
 
-        manager.draw_text(renderer, "pause", XCENTRE-20, PAUSEY);
-        manager.draw_text(renderer, "new game", XCENTRE-32, PAUSEY+8);
-        manager.draw_text(renderer, "sounds", XCENTRE-24, PAUSEY+16);
+        manager.draw_text("pause", XCENTRE-20, PAUSEY);
+        manager.draw_text("new game", XCENTRE-32, PAUSEY+8);
+        manager.draw_text("sounds", XCENTRE-24, PAUSEY+16);
         if !self.sound_muted {
-            manager.draw_text(renderer, "x", XCENTRE+32, PAUSEY+16);
+            manager.draw_text("x", XCENTRE+32, PAUSEY+16);
         }
-        manager.draw_text(renderer, "music", XCENTRE-20, PAUSEY+24);
+        manager.draw_text("music", XCENTRE-20, PAUSEY+24);
         if !self.music_muted {
-            manager.draw_text(renderer, "x", XCENTRE+24, PAUSEY+24);
+            manager.draw_text("x", XCENTRE+24, PAUSEY+24);
         }
-        manager.draw_text(renderer, "save and quit", XCENTRE-48, PAUSEY+32);
-        manager.draw_text(renderer, "-", 24, PAUSEY+(self.menu_cursor+1)*8);
+        manager.draw_text("save and quit", XCENTRE-48, PAUSEY+32);
+        manager.draw_text("-", 24, PAUSEY+(self.menu_cursor+1)*8);
 
         PauseReturn::None
     }

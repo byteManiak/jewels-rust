@@ -21,7 +21,7 @@ impl SpinnyGem {
         Self {sprite: Sprite::new(name, 15, 15, 6, 100), is_looping: false, start_tick: Instant::now()}
     }
 
-    pub fn update(&mut self, manager: &AssetManager, renderer: &mut WindowCanvas) {
+    pub fn update(&mut self, manager: &AssetManager) {
         let mut x;
         let y;
         if !self.is_looping {
@@ -41,7 +41,7 @@ impl SpinnyGem {
             y = ((YCENTRE-21) as f32 - yoff) as i32;
         }
 
-        self.sprite.draw(manager, renderer, x, y);
+        self.sprite.draw(manager, x, y);
     }
 }
 
@@ -66,7 +66,7 @@ impl MainMenu {
         }
     }
 
-    pub(crate) fn update(&mut self, input: &Input, manager: &AssetManager, renderer: &mut WindowCanvas) -> bool {
+    pub(crate) fn update(&mut self, input: &Input, manager: &AssetManager) -> bool {
         let mut ret = false;
 
         if self.logo_moving {
@@ -89,17 +89,17 @@ impl MainMenu {
                 ret = true;
             }
 
-            manager.draw_text(renderer, "a game by bytemaniak", 6, 1);
-            manager.draw_text(renderer, "press enter to play", 10, 100);
+            manager.draw_text("a game by bytemaniak", 6, 1);
+            manager.draw_text("press enter to play", 10, 100);
         }
 
         manager.draw_texture(
-            renderer, "logo",
+            "logo",
             31, self.logo_y, (LOGO_SIZE_X*2) as u32, (LOGO_SIZE_Y*2) as u32,
             0, 0, LOGO_SIZE_X as u32, LOGO_SIZE_Y as u32
         );
         for tex in self.gems.iter_mut() {
-            tex.update(manager, renderer);
+            tex.update(manager);
         }
 
         ret

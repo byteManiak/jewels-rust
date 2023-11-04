@@ -7,11 +7,11 @@ use sdl2::{pixels::Color, rect::Rect};
 
 fn main() -> Result<(), String> {
     let mut ctx = Context::create_ctx("Jewels!", XRES, YRES, true)?;
-    let texture_creator = ctx.renderer.texture_creator();
+    let texture_creator = ctx.renderer.borrow().texture_creator();
     let font_manager = sdl2::ttf::init().unwrap();
     let font = font_manager.load_font("assets/font.ttf", 8).unwrap();
     let mut asset_manager = AssetManager::new(
-        &texture_creator, &font,
+        &texture_creator, &ctx.renderer, &font,
         u32_palette(0x050500, 0x033822, 0x3e9533, 0xd4f044)
     );
 
@@ -25,7 +25,7 @@ fn main() -> Result<(), String> {
             break;
         }
 
-        ctx.renderer.present();
+        ctx.renderer.borrow_mut().present();
     }
     Ok(())
 }

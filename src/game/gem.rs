@@ -36,7 +36,7 @@ impl Gem {
         self.gem_type = 255;
     }
 
-    pub fn draw(&mut self, is_selected: bool, renderer: &mut WindowCanvas, manager: &AssetManager) {
+    pub fn draw(&mut self, is_selected: bool, manager: &AssetManager) {
         let dx = f32::abs(self.x - self.xdest as f32) + 1f32;
         let dy = f32::abs(self.y - self.ydest as f32) + 1f32;
 
@@ -73,9 +73,9 @@ impl Gem {
         self.start_tick = Instant::now();
 
         if is_selected {
-            self.sprite.draw(manager, renderer, self.x as i32, self.y as i32);
+            self.sprite.draw(manager, self.x as i32, self.y as i32);
         } else {
-            self.sprite.draw_tile(manager, renderer, self.x as i32, self.y as i32, 0);
+            self.sprite.draw_tile(manager, self.x as i32, self.y as i32, 0);
         }
     }
 

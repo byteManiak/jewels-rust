@@ -19,7 +19,7 @@ impl ProgressGem {
         Self {reached: false, start_tick: Instant::now(), texture: format!("gem{:?}", gem_type), xdest: 8, ydest: 4, x, y}
     }
 
-    pub fn draw(&mut self, renderer: &mut WindowCanvas, manager: &AssetManager) {
+    pub fn draw(&mut self, manager: &AssetManager) {
         let dx = f32::abs(self.x as f32 - self.xdest as f32) + 1f32;
         let dy = f32::abs(self.y as f32 - self.ydest as f32) - 1f32;
 
@@ -51,6 +51,6 @@ impl ProgressGem {
             self.reached = true;
         }
 
-        manager.draw_texture(renderer, &self.texture, self.x, self.y, 15, 15, 0, 0, 15, 15);
+        manager.draw_texture(&self.texture, self.x, self.y, 15, 15, 0, 0, 15, 15);
     }
 }

@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, cell::RefCell, rc::Rc};
 
 use sdl2::{Sdl, render::WindowCanvas, mixer::{AUDIO_S16LSB, InitFlag}, keyboard::Keycode, mouse::MouseButton, event::Event};
 
@@ -6,7 +6,7 @@ use super::input::Input;
 
 pub struct Context {
     pub sdl: Sdl,
-    pub renderer: WindowCanvas,
+    pub renderer: Rc<RefCell<WindowCanvas>>,
 
     pub input: Input
 }
@@ -33,7 +33,7 @@ impl Context {
         renderer.clear();
         renderer.present();
 
-        Ok(Context { sdl, renderer, input: Input::new() })
+        Ok(Context { sdl, renderer: Rc::new(RefCell::new(renderer)), input: Input::new() })
     }
 
     pub fn update_events(&mut self) {

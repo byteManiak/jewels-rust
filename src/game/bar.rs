@@ -33,15 +33,15 @@ impl Bar {
         self.gemcount = 0;
     }
 
-    pub fn draw(&self, manager: &AssetManager, renderer: &mut WindowCanvas) {
+    pub fn draw(&self, manager: &AssetManager) {
         let t = 79 - (self.start_tick.elapsed().as_millis() as u32/300) % 80;
         let p = 1f32 - self.gemcount as f32 / self.maxgems as f32;
 
-        manager.draw_texture(renderer, "bar", BARX+1, BARY+1+80-t as i32, 20, t,    0, 0,        20, t);
-        manager.draw_texture(renderer, "bar", BARX+1, BARY+1,             20, 80-t, 0, t as i32, 20, 80-t);
-        manager.draw_rectangle(renderer, BARX+1, BARY+1, 20, (80 as f32*p) as u32, 2, true);
-        manager.draw_texture(renderer, "barholder", BARX, BARY, 22, 82, 0, 0, 0, 0);
+        manager.draw_texture("bar", BARX+1, BARY+1+80-t as i32, 20, t,    0, 0,        20, t);
+        manager.draw_texture("bar", BARX+1, BARY+1,             20, 80-t, 0, t as i32, 20, 80-t);
+        manager.draw_rectangle(BARX+1, BARY+1, 20, (80 as f32*p) as u32, 2, true);
+        manager.draw_texture("barholder", BARX, BARY, 22, 82, 0, 0, 0, 0);
 
-        manager.draw_texture(renderer, "bardesc", BARX-2, BARY+83, 26, 36, 0, 0, 0, 0);
+        manager.draw_texture("bardesc", BARX-2, BARY+83, 26, 36, 0, 0, 0, 0);
     }
 }

@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 use sdl2::{render::{TextureCreator, WindowCanvas}, video::WindowContext, pixels::{Palette, Color}, rect::Rect, mixer::Channel, ttf::Font};
 
 use super::{sound::SoundManager, texture::{TexManager, ColorPalette}};
@@ -5,14 +7,15 @@ use super::{sound::SoundManager, texture::{TexManager, ColorPalette}};
 pub struct AssetManager<'a, 'b> {
     tex_manager: TexManager<'a>,
     snd_manager: SoundManager<'a>,
-    font: &'a Font<'a, 'b>
+    font: &'a Font<'a, 'b>,
+    renderer: Rc<RefCell<WindowCanvas>>
 }
 
 impl<'a, 'b> AssetManager<'a, 'b> {
-    pub fn new(texture_creator: &'a TextureCreator<WindowContext>, font: &'a Font<'a, 'b>, palette: ColorPalette) -> Self {
+    pub fn new(texture_creator: &'a TextureCreator<WindowContext>, renderer: &Rc<RefCell<WindowCanvas>>, font: &'a Font<'a, 'b>, palette: ColorPalette) -> Self {
         let tex_manager = TexManager::new(texture_creator, palette);
         let snd_manager = SoundManager::new();
-        Self {tex_manager, snd_manager, font}
+        Self {tex_manager, snd_manager, font, renderer: renderer.clone()}
     }
 
     pub fn load_sound(&mut self, path: &str, name: &str) -> Result<(), String> {
@@ -32,13 +35,13 @@ impl<'a, 'b> AssetManager<'a, 'b> {
     }
 
     pub fn draw_texture(
-        &self, renderer: &mut WindowCanvas, name: &str,
+        &self, name: &str,
         x: i32, y: i32, w: u32, h: u32,
         sx: i32, sy: i32, sw: u32, sh: u32) {
         if let Some(tex) = self.tex_manager.get_texture(name) {
             let src = if sx == 0 && sy == 0 && sw == 0 && sh == 0 {None} else {Some(Rect::new(sx, sy, sw, sh))} ;
             let dst = Rect::new(x, y, w, h);
-            renderer.copy(tex, src, Some(dst)).unwrap();
+            self.renderer.borrow_mut().copy(tex, src, Some(dst)).unwrap();
         }
     }
 
@@ -78,7 +81,7 @@ impl<'a, 'b> AssetManager<'a, 'b> {
         self.tex_manager.update_textures()
     }
 
-    pub fn draw_text(&self, renderer: &mut WindowCanvas, text: &str, x: i32, y: i32) {
+    pub fn draw_text(&self, text: &str, x: i32, y: i32) {
         let surface = self.font.render(text).solid(self.tex_manager.get_index_color(3));
 
         if let Ok(surface) = surface {
@@ -87,13 +90,15 @@ impl<'a, 'b> AssetManager<'a, 'b> {
 
             if let Ok(tex) = texture {
                 let dst = Rect::new(x, y, w, h);
-                let _ = renderer.copy(&tex, None, dst);
+                let _ = self.renderer.borrow_mut().copy(&tex, None, dst);
             }
         }
     }
 
-    pub fn draw_rectangle(&self, renderer: &mut WindowCanvas, x: i32, y: i32, w: u32, h: u32, color_index: usize, fill: bool) {
+    pub fn draw_rectangle(&self, x: i32, y: i32, w: u32, h: u32, color_index: usize, fill: bool) {
         let r = Rect::new(x, y, w, h);
+
+        let mut renderer = self.renderer.borrow_mut();
         renderer.set_draw_color(self.tex_manager.get_index_color(color_index));
 
         if fill {

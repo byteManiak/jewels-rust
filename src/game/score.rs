@@ -23,13 +23,13 @@ impl Score {
         self.score += combo * self.level*5;
     }
 
-    pub fn draw(&self, manager: &AssetManager, renderer: &mut WindowCanvas) {
+    pub fn draw(&self, manager: &AssetManager,) {
         let level_string = format!("{:03}", self.level);
         let score_string = format!("{:07}", self.score);
 
-        manager.draw_text(renderer, "level", LEVELX, LEVELY);
-        manager.draw_text(renderer, &level_string, LEVELX+48, LEVELY);
-        manager.draw_text(renderer, &score_string, SCOREX, SCOREY);
+        manager.draw_text("level", LEVELX, LEVELY);
+        manager.draw_text(&level_string, LEVELX+48, LEVELY);
+        manager.draw_text(&score_string, SCOREX, SCOREY);
     }
 
     pub fn increase_level(&mut self) {

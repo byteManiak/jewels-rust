@@ -233,7 +233,7 @@ impl Board {
         }
     }
 
-    pub(super) fn update(&mut self, input: &Input, manager: &mut AssetManager, renderer: &mut WindowCanvas) -> bool {
+    pub(super) fn update(&mut self, input: &Input, manager: &mut AssetManager) -> bool {
         (self.mouse_x, self.mouse_y) = input.get_mouse_coords();
 
         if self.gameover {
@@ -278,21 +278,21 @@ impl Board {
             for j in 0..8 {
                 let gem = &mut self.gems[i as usize][j as usize];
 
-                manager.draw_rectangle(renderer, BASEX+i*16, BASEY+j*16, 17, 17, 1, false);
+                manager.draw_rectangle(BASEX+i*16, BASEY+j*16, 17, 17, 1, false);
 
                 if self.x_cursor == i && self.y_cursor == j {
                     let color = if self.is_selecting {3} else {1};
-                    manager.draw_rectangle(renderer, BASEX+i*16+1, BASEY+j*16+1, 15, 15, color, true);
+                    manager.draw_rectangle(BASEX+i*16+1, BASEY+j*16+1, 15, 15, color, true);
 
                     if gem.gem_type != NO_GEM {
-                        gem.draw(true, renderer, manager);
+                        gem.draw(true, manager);
                         if gem.is_moving {
                             self.is_animating = true;
                         }
                     }
                 } else {
                     if gem.gem_type != NO_GEM {
-                        gem.draw(false, renderer, manager);
+                        gem.draw(false, manager);
                         if gem.is_moving {
                             self.is_animating = true;
                         }
@@ -313,8 +313,8 @@ impl Board {
                     for j in 0..8 {
                         let gem = &mut self.gems[i as usize][j as usize];
                         if gem.is_matched {
-                            manager.draw_rectangle(renderer, BASEX+i*16+1, BASEY+j*16+1, 15, 15, 3, true);
-                            gem.draw(true, renderer, manager);
+                            manager.draw_rectangle(BASEX+i*16+1, BASEY+j*16+1, 15, 15, 3, true);
+                            gem.draw(true, manager);
                         }
                     }
                 }
@@ -340,11 +340,11 @@ impl Board {
             }
         }
 
-        self.score.draw(manager, renderer);
-        self.bar.draw(manager, renderer);
+        self.score.draw(manager);
+        self.bar.draw(manager);
 
         for gem in &mut self.progress_gems {
-            gem.draw(renderer, manager);
+            gem.draw(manager);
             if gem.reached {
                 self.bar.add_progress();
                 if self.bar.start_level {
@@ -358,15 +358,15 @@ impl Board {
         self.progress_gems.retain(|gem|{!gem.reached});
 
         if self.gameover {
-            manager.draw_rectangle(renderer, 0, 63, 160, 1, 1, true);
-            manager.draw_rectangle(renderer, 0, 64, 160, 25, 2, true);
-            manager.draw_rectangle(renderer, 0, 88, 160, 1, 1, true);
-            manager.draw_text(renderer, "game over", 48, 67);
-            manager.draw_text(renderer, "press enter to reset", 1, 75);
+            manager.draw_rectangle(0, 63, 160, 1, 1, true);
+            manager.draw_rectangle(0, 64, 160, 25, 2, true);
+            manager.draw_rectangle(0, 88, 160, 1, 1, true);
+            manager.draw_text("game over", 48, 67);
+            manager.draw_text("press enter to reset", 1, 75);
         }
 
         if self.is_paused {
-            let ret = self.pause_menu.update(renderer, manager, input);
+            let ret = self.pause_menu.update(manager, input);
             if ret == PauseReturn::NewGame {
                 self.new_game();
                 self.is_paused = false;

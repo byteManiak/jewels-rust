@@ -68,18 +68,22 @@ impl Game {
 
         ctx.update_events();
 
-        ctx.renderer.set_draw_color(Color::RGBA(0, 0, 0, 0));
-        ctx.renderer.clear();
+        let mut renderer = ctx.renderer.borrow_mut();
 
-        manager.draw_rectangle(&mut ctx.renderer, 0, 0, XRES, YRES, 2, true);
+        renderer.set_draw_color(Color::RGBA(0, 0, 0, 0));
+        renderer.clear();
+
+        drop(renderer);
+
+        manager.draw_rectangle(0, 0, XRES, YRES, 2, true);
 
         if self.in_menu {
-            if mainmenu.update(&ctx.input, manager, &mut ctx.renderer) {
+            if mainmenu.update(&ctx.input, manager) {
                 self.in_menu = false;
                 board.new_game();
                 manager.play_music();
             }
-        } else if board.update(&ctx.input, manager, &mut ctx.renderer) {
+        } else if board.update(&ctx.input, manager) {
             return false;
         }
 

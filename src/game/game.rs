@@ -54,7 +54,7 @@ impl Game {
         manager.load_sound("assets/levelup.wav", "levelup")?;
         manager.load_sound("assets/gameover.wav", "gameover")?;
 
-        manager.load_music("assets/music.wav");
+        manager.load_music("assets/bejeweled.mp3");
 
         self.mainmenu = Some(MainMenu::new(manager));
         self.board = Some(Board::new());
@@ -68,19 +68,14 @@ impl Game {
 
         ctx.update_events();
 
-        let mut renderer = ctx.renderer.borrow_mut();
-
-        renderer.set_draw_color(Color::RGBA(0, 0, 0, 0));
-        renderer.clear();
-
-        drop(renderer);
+        manager.begin_draw();
 
         manager.draw_rectangle(0, 0, XRES, YRES, 2, true);
 
         if self.in_menu {
             if mainmenu.update(&ctx.input, manager) {
                 self.in_menu = false;
-                board.new_game();
+                board.load_game(manager);
                 manager.play_music();
             }
         } else if board.update(&ctx.input, manager) {

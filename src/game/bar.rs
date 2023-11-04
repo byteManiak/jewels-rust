@@ -6,8 +6,8 @@ use crate::engine::assets::AssetManager;
 
 pub(crate) struct Bar {
     pub start_level: bool,
-    maxgems: i32,
-    gemcount: i32,
+    pub maxgems: i32,
+    pub gemcount: i32,
     start_tick: Instant
 }
 

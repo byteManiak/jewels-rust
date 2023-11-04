@@ -1,4 +1,4 @@
-use std::time::Instant;
+use std::{time::Instant, fs::File, io::{Read, Write}, hash::BuildHasher};
 
 use rand::Rng;
 use sdl2::{keyboard::Keycode, mouse::MouseButton};
@@ -371,6 +371,7 @@ impl Board {
                 self.new_game();
                 self.is_paused = false;
             } else if ret == PauseReturn::Quit {
+                self.save_game();
                 return true;
             }
         }
@@ -507,6 +508,59 @@ impl Board {
                         return;
                 }
             }
+        }
+    }
+
+    fn save_game(&self) {
+        let mut file = File::create(".savegame");
+        if let Ok(mut file) = file {
+            file.write(&self.score.level.to_ne_bytes());
+            file.write(&self.score.score.to_ne_bytes());
+            file.write(&self.bar.gemcount.to_ne_bytes());
+            file.write(&self.bar.maxgems.to_ne_bytes());
+
+            for i in 0..8 {
+                for j in 0..8 {
+                    file.write(&self.gems[i][j].gem_type.to_ne_bytes());
+                }
+            }
+        }
+    }
+
+    fn try_load_game(&mut self, manager: &mut AssetManager) -> Result<(), bool> {
+        let mut file = File::open(".savegame").map_err(|_| false)?;
+        let mut buffer = [0; 4];
+
+        file.read_exact(&mut buffer);
+        self.score.level = u32::from_ne_bytes(buffer);
+        file.read_exact(&mut buffer);
+        self.score.score = u32::from_ne_bytes(buffer);
+        file.read_exact(&mut buffer);
+        self.bar.gemcount = i32::from_ne_bytes(buffer);
+        file.read_exact(&mut buffer);
+        self.bar.maxgems = i32::from_ne_bytes(buffer);
+
+        let mut buffer = [0; 1];
+        for i in 0..8 {
+            for j in 0..8 {
+                file.read_exact(&mut buffer);
+                self.gems[i][j] = Gem::new(u8::from_ne_bytes(buffer), i as i32, j as i32, 0);
+            }
+        }
+
+        for i in 0..(self.score.level-1)%6 {
+            manager.set_next_palette();
+        }
+
+        self.find_match(false);
+        self.sweep_matches(manager);
+
+        Ok(())
+    }
+
+    pub fn load_game(&mut self, manager: &mut AssetManager) {
+        if let Err(_) = self.try_load_game(manager) {
+            self.new_game();
         }
     }
 }

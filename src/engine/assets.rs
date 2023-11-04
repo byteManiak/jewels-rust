@@ -107,6 +107,13 @@ impl<'a, 'b> AssetManager<'a, 'b> {
             let _ = renderer.draw_rect(r);
         }
     }
+
+    pub fn begin_draw(&mut self) {
+        let mut renderer = self.renderer.borrow_mut();
+
+        renderer.set_draw_color(Color::RGBA(0, 0, 0, 0));
+        renderer.clear();
+    }
 }
 
 pub fn u32_palette(c1: u32, c2: u32, c3: u32, c4:u32) -> ColorPalette {

@@ -1,12 +1,8 @@
-use std::{panic::AssertUnwindSafe, fmt::Binary};
-
-use sdl2::render::WindowCanvas;
-
 use crate::engine::assets::AssetManager;
 
 pub(crate) struct Score {
-    score: u32,
-    level: u32
+    pub score: u32,
+    pub level: u32
 }
 
 const SCOREX: i32 = 100;

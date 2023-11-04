@@ -438,7 +438,7 @@ impl Board {
 
         self.check_gameover();
         if self.gameover {
-            
+            let _ = manager.play_sound("gameover");
         }
     }
 

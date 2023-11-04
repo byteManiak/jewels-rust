@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use sdl2::{render::WindowCanvas, rect::Rect};
+
 
 use crate::engine::assets::AssetManager;
 

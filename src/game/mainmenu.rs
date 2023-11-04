@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use sdl2::{keyboard::Keycode, mixer::Channel, render::WindowCanvas};
+use sdl2::{keyboard::Keycode, mixer::Channel};
 
 use crate::engine::{input::Input, assets::AssetManager, sprite::Sprite};
 

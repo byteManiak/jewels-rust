@@ -41,7 +41,7 @@ impl Context {
 
         for event in events.poll_iter() {
             match event {
-                Event::MouseMotion { timestamp, window_id, which, mousestate, x, y, xrel, yrel } => {
+                Event::MouseMotion { timestamp: _, window_id: _, which: _, mousestate: _, x, y, xrel: _, yrel: _ } => {
                     self.input.update_mouse_coords((x, y));
                 }
                 _ => continue

@@ -1,4 +1,4 @@
-use std::{time::Instant, fs::File, io::{Read, Write}, hash::BuildHasher};
+use std::{time::Instant, fs::File, io::{Read, Write}};
 
 use rand::Rng;
 use sdl2::{keyboard::Keycode, mouse::MouseButton};
@@ -512,7 +512,7 @@ impl Board {
     }
 
     fn save_game(&self) {
-        let mut file = File::create(".savegame");
+        let file = File::create(".savegame");
         if let Ok(mut file) = file {
             file.write(&self.score.level.to_ne_bytes());
             file.write(&self.score.score.to_ne_bytes());
@@ -548,7 +548,7 @@ impl Board {
             }
         }
 
-        for i in 0..(self.score.level-1)%6 {
+        for _i in 0..(self.score.level-1)%6 {
             manager.set_next_palette();
         }
 

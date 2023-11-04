@@ -3,7 +3,7 @@ mod engine;
 
 use engine::{context::Context, assets::{AssetManager, u32_palette}};
 use game::game::{Game, XRES, YRES};
-use sdl2::{pixels::Color, rect::Rect};
+
 
 fn main() -> Result<(), String> {
     let mut ctx = Context::create_ctx("Jewels!", XRES, YRES, true)?;

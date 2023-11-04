@@ -1,4 +1,4 @@
-use sdl2::{keyboard::Keycode, render::WindowCanvas, rect::Rect};
+use sdl2::{keyboard::Keycode};
 
 use crate::engine::{input::Input, assets::AssetManager};
 

@@ -1,7 +1,5 @@
 use std::time::Instant;
 
-
-
 use crate::engine::assets::AssetManager;
 
 pub(crate) struct Bar {
@@ -39,7 +37,7 @@ impl Bar {
 
         manager.draw_texture("bar", BARX+1, BARY+1+80-t as i32, 20, t,    0, 0,        20, t);
         manager.draw_texture("bar", BARX+1, BARY+1,             20, 80-t, 0, t as i32, 20, 80-t);
-        manager.draw_rectangle(BARX+1, BARY+1, 20, (80 as f32*p) as u32, 2, true);
+        manager.draw_rectangle(BARX+1, BARY+1, 20, (80f32*p) as u32, 2, true);
         manager.draw_texture("barholder", BARX, BARY, 22, 82, 0, 0, 0, 0);
 
         manager.draw_texture("bardesc", BARX-2, BARY+83, 26, 36, 0, 0, 0, 0);

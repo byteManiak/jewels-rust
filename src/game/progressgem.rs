@@ -1,6 +1,4 @@
-use std::time::Instant;
-
-
+use std::{time::Instant, cmp::Ordering};
 
 use crate::engine::assets::AssetManager;
 
@@ -23,28 +21,36 @@ impl ProgressGem {
         let dx = f32::abs(self.x as f32 - self.xdest as f32) + 1f32;
         let dy = f32::abs(self.y as f32 - self.ydest as f32) - 1f32;
 
-        if self.x < self.xdest {
-            self.x += (dx * self.start_tick.elapsed().as_millis() as f32 / 1000f32) as i32;
-            if self.x > self.xdest {
-                self.x = self.xdest;
-            }
-        } else if self.x > self.xdest {
-            self.x -= (dx * self.start_tick.elapsed().as_millis() as f32 / 1000f32) as i32;
-            if self.x < self.xdest {
-                self.x = self.xdest;
-            }
+        match self.x.cmp(&self.xdest) {
+            Ordering::Less => {
+                self.x += (dx * self.start_tick.elapsed().as_millis() as f32 / 2000f32) as i32;
+                if self.x > self.xdest {
+                    self.x = self.xdest;
+                }
+            },
+            Ordering::Greater => {
+                self.x -= (dx * self.start_tick.elapsed().as_millis() as f32 / 2000f32) as i32;
+                if self.x < self.xdest {
+                    self.x = self.xdest;
+                }
+            },
+            _ => {}
         }
 
-        if self.y < self.ydest {
-            self.y += (dy * self.start_tick.elapsed().as_millis() as f32 / 1000f32) as i32;
-            if self.y > self.ydest {
-                self.y = self.ydest;
-            }
-        } else if self.y > self.ydest {
-            self.y -= (dy * self.start_tick.elapsed().as_millis() as f32 / 1000f32) as i32;
-            if self.y < self.ydest {
-                self.y = self.ydest;
-            }
+        match self.y.cmp(&self.ydest) {
+            Ordering::Less => {
+                self.y += (dy * self.start_tick.elapsed().as_millis() as f32 / 2000f32) as i32;
+                if self.y > self.ydest {
+                    self.y = self.ydest;
+                }
+            },
+            Ordering::Greater => {
+                self.y -= (dy * self.start_tick.elapsed().as_millis() as f32 / 2000f32) as i32;
+                if self.y < self.ydest {
+                    self.y = self.ydest;
+                }
+            },
+            _ => {}
         }
 
         if i32::abs(self.x - self.xdest) < 4 && i32::abs(self.y - self.ydest) < 4 {

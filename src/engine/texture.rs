@@ -21,8 +21,7 @@ pub struct TexManager<'a> {
 
 impl<'a> TexManager<'a> {
     pub(crate) fn new(creator: &'a TextureCreator<WindowContext>, palette: ColorPalette) -> Self {
-        let mut palettes = Vec::new();
-        palettes.push(palette);
+        let palettes = vec![palette];
 
         Self { loader: creator, texture_data: HashMap::new(), palettes, current_palette: 0 }
     }

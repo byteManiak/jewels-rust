@@ -137,15 +137,15 @@ impl Board {
             self.gems[x1 as usize][y1 as usize] = Gem::new(gem_type, x1, y1, 0);
             self.gems[x2 as usize][y2 as usize] = Gem::new(gem_type, x2, y2, 0);
         } else {
-            return self.gen_partial_match(
+            self.gen_partial_match(
                 rand::thread_rng().gen_range(0..8),
                 rand::thread_rng().gen_range(0..8),
-                gem_type);
+                gem_type)
         }
     }
 
     fn is_slot_available(&self, x: i32, y: i32) -> bool {
-        if x < 0 || x > 7 || y < 0 || y > 7 {
+        if !(0..=7).contains(&x) && !(0..=7).contains(&y) {
             return false;
         }
 
@@ -246,30 +246,28 @@ impl Board {
             if input.is_pressed(Keycode::Escape) {
                 self.is_paused = false;
             }
+        } else if input.is_pressed(Keycode::Escape) {
+            self.is_paused = true;
         } else {
-            if input.is_pressed(Keycode::Escape) {
-                self.is_paused = true;
-            } else {
-                self.is_selecting = Input::is_in_bounds(self.mouse_x, self.mouse_y, BASEX, BASEY, BASEX+BWIDTH, BASEY+BWIDTH) && input.is_button_pressed(MouseButton::Left);
+            self.is_selecting = Input::is_in_bounds(self.mouse_x, self.mouse_y, BASEX, BASEY, BASEX+BWIDTH, BASEY+BWIDTH) && input.is_button_pressed(MouseButton::Left);
 
-                if !self.is_selecting {
-                    self.x_cursor = (self.mouse_x - BASEX) / 16;
-                    self.y_cursor = (self.mouse_y - BASEY) / 16;
-                } else if !self.is_animating && !self.short_wait && self.swap_state == SwapState::NoSwap {
-                    if self.is_mouse_at_coords(self.x_cursor-1, self.y_cursor) && self.x_cursor > 0 {
-                        self.swap(self.x_cursor, self.y_cursor, self.x_cursor-1, self.y_cursor, true);
-                    } else if self.is_mouse_at_coords(self.x_cursor+1, self.y_cursor) && self.x_cursor < 7 {
-                        self.swap(self.x_cursor, self.y_cursor, self.x_cursor+1, self.y_cursor, true);
-                    } else if self.is_mouse_at_coords(self.x_cursor, self.y_cursor-1) && self.y_cursor > 0 {
-                        self.swap(self.x_cursor, self.y_cursor, self.x_cursor, self.y_cursor-1, true);
-                    } else if self.is_mouse_at_coords(self.x_cursor, self.y_cursor+1) && self.y_cursor < 7 {
-                        self.swap(self.x_cursor, self.y_cursor, self.x_cursor, self.y_cursor+1, true);
-                    }
+            if !self.is_selecting {
+                self.x_cursor = (self.mouse_x - BASEX) / 16;
+                self.y_cursor = (self.mouse_y - BASEY) / 16;
+            } else if !self.is_animating && !self.short_wait && self.swap_state == SwapState::NoSwap {
+                if self.is_mouse_at_coords(self.x_cursor-1, self.y_cursor) && self.x_cursor > 0 {
+                    self.swap(self.x_cursor, self.y_cursor, self.x_cursor-1, self.y_cursor, true);
+                } else if self.is_mouse_at_coords(self.x_cursor+1, self.y_cursor) && self.x_cursor < 7 {
+                    self.swap(self.x_cursor, self.y_cursor, self.x_cursor+1, self.y_cursor, true);
+                } else if self.is_mouse_at_coords(self.x_cursor, self.y_cursor-1) && self.y_cursor > 0 {
+                    self.swap(self.x_cursor, self.y_cursor, self.x_cursor, self.y_cursor-1, true);
+                } else if self.is_mouse_at_coords(self.x_cursor, self.y_cursor+1) && self.y_cursor < 7 {
+                    self.swap(self.x_cursor, self.y_cursor, self.x_cursor, self.y_cursor+1, true);
                 }
-
-                self.x_cursor = self.x_cursor.clamp(0, 7);
-                self.y_cursor = self.y_cursor.clamp(0, 7);
             }
+
+            self.x_cursor = self.x_cursor.clamp(0, 7);
+            self.y_cursor = self.y_cursor.clamp(0, 7);
         }
 
         self.is_animating = false;
@@ -290,12 +288,10 @@ impl Board {
                             self.is_animating = true;
                         }
                     }
-                } else {
-                    if gem.gem_type != NO_GEM {
-                        gem.draw(false, manager);
-                        if gem.is_moving {
-                            self.is_animating = true;
-                        }
+                } else if gem.gem_type != NO_GEM {
+                    gem.draw(false, manager);
+                    if gem.is_moving {
+                        self.is_animating = true;
                     }
                 }
             }
@@ -333,7 +329,7 @@ impl Board {
                     self.combo += 1;
                     let c = if self.combo > 7 {7} else {self.combo};
                     let _ =  manager.play_sound(format!("combo{:?}", c).as_str());
-                    self.sweep_matches(&manager);
+                    self.sweep_matches(manager);
                 } else {
                     self.combo = -1;
                 }
@@ -350,7 +346,7 @@ impl Board {
                 if self.bar.start_level {
                     self.bar.start_level = false;
                     self.score.increase_level();
-                    manager.play_sound("levelup");
+                    let _ = manager.play_sound("levelup");
                     manager.set_next_palette();
                 }
             }
@@ -514,36 +510,36 @@ impl Board {
     fn save_game(&self) {
         let file = File::create(".savegame");
         if let Ok(mut file) = file {
-            file.write(&self.score.level.to_ne_bytes());
-            file.write(&self.score.score.to_ne_bytes());
-            file.write(&self.bar.gemcount.to_ne_bytes());
-            file.write(&self.bar.maxgems.to_ne_bytes());
+            let _ = file.write(&self.score.level.to_ne_bytes());
+            let _ = file.write(&self.score.score.to_ne_bytes());
+            let _ = file.write(&self.bar.gemcount.to_ne_bytes());
+            let _ = file.write(&self.bar.maxgems.to_ne_bytes());
 
             for i in 0..8 {
                 for j in 0..8 {
-                    file.write(&self.gems[i][j].gem_type.to_ne_bytes());
+                    let _ = file.write(&self.gems[i][j].gem_type.to_ne_bytes());
                 }
             }
         }
     }
 
-    fn try_load_game(&mut self, manager: &mut AssetManager) -> Result<(), bool> {
-        let mut file = File::open(".savegame").map_err(|_| false)?;
+    fn try_load_game(&mut self, manager: &mut AssetManager) -> Result<(), ()> {
+        let mut file = File::open(".savegame").map_err(|_| ())?;
         let mut buffer = [0; 4];
 
-        file.read_exact(&mut buffer);
+        let _ = file.read_exact(&mut buffer);
         self.score.level = u32::from_ne_bytes(buffer);
-        file.read_exact(&mut buffer);
+        let _ = file.read_exact(&mut buffer);
         self.score.score = u32::from_ne_bytes(buffer);
-        file.read_exact(&mut buffer);
+        let _ = file.read_exact(&mut buffer);
         self.bar.gemcount = i32::from_ne_bytes(buffer);
-        file.read_exact(&mut buffer);
+        let _ = file.read_exact(&mut buffer);
         self.bar.maxgems = i32::from_ne_bytes(buffer);
 
         let mut buffer = [0; 1];
         for i in 0..8 {
             for j in 0..8 {
-                file.read_exact(&mut buffer);
+                let _ = file.read_exact(&mut buffer);
                 self.gems[i][j] = Gem::new(u8::from_ne_bytes(buffer), i as i32, j as i32, 0);
             }
         }
@@ -559,7 +555,7 @@ impl Board {
     }
 
     pub fn load_game(&mut self, manager: &mut AssetManager) {
-        if let Err(_) = self.try_load_game(manager) {
+        if self.try_load_game(manager).is_err() {
             self.new_game();
         }
     }

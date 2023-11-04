@@ -1,6 +1,4 @@
-use std::time::Instant;
-
-
+use std::{time::Instant, cmp::Ordering};
 
 use crate::engine::{assets::AssetManager, sprite::Sprite};
 
@@ -41,28 +39,36 @@ impl Gem {
 
         let tick = self.start_tick.elapsed().as_millis() as f32 / 120f32;
 
-        if (self.x as i32) < self.xdest {
-            self.x += dx * tick;
-            if (self.x as i32) > self.xdest {
-                self.x = self.xdest as f32;
+        match (self.x as i32).cmp(&self.xdest) {
+            Ordering::Less => {
+                self.x += dx * tick;
+                if (self.x as i32) > self.xdest {
+                    self.x = self.xdest as f32;
+                }
             }
-        } else if (self.x as i32) > self.xdest {
-            self.x -= dx * tick;
-            if (self.x as i32) < self.xdest {
-                self.x = self.xdest as f32;
+            Ordering::Greater => {
+                self.x -= dx * tick;
+                if (self.x as i32) < self.xdest {
+                    self.x = self.xdest as f32;
+                }
             }
+            _ => {}
         }
 
-        if (self.y as i32) < self.ydest {
-            self.y += dy * tick;
-            if (self.y as i32) > self.ydest {
-                self.y = self.ydest as f32;
+        match (self.y as i32).cmp(&self.ydest) {
+            Ordering::Less => {
+                self.y += dy * tick;
+                if (self.y as i32) > self.ydest {
+                    self.y = self.ydest as f32;
+                }
             }
-        } else if (self.y as i32) > self.ydest {
-            self.y -= dy * tick;
-            if (self.y as i32) < self.ydest {
-                self.y = self.ydest as f32;
+            Ordering::Greater => {
+                self.y -= dy * tick;
+                if (self.y as i32) < self.ydest {
+                    self.y = self.ydest as f32;
+                }
             }
+            _ => {}
         }
 
         if self.x as i32 == self.xdest && self.y as i32 == self.ydest {

@@ -1,7 +1,7 @@
 use std::time::Instant;
 
 use rand::Rng;
-use sdl2::{keyboard::Keycode, mouse::MouseButton, render::WindowCanvas, rect::Rect, pixels::Color};
+use sdl2::{keyboard::Keycode, mouse::MouseButton};
 
 use crate::engine::{input::Input, assets::AssetManager};
 
@@ -157,18 +157,18 @@ impl Board {
 
         for i in 1..=6 {
             for j in 0..8 {
-                if self.gems[i as usize][j as usize].gem_type == self.gems[i-1 as usize][j as usize].gem_type &&
-                   self.gems[i as usize][j as usize].gem_type == self.gems[i+1 as usize][j as usize].gem_type {
-                    self.gems[i as usize][j as usize].set_next_type();
+                if self.gems[i][j].gem_type == self.gems[i-1][j].gem_type &&
+                   self.gems[i][j].gem_type == self.gems[i+1][j].gem_type {
+                    self.gems[i][j].set_next_type();
                    }
             }
         }
 
         for j in 1..=6 {
             for i in 0..8 {
-                if self.gems[i as usize][j as usize].gem_type == self.gems[i as usize][j-1 as usize].gem_type &&
-                   self.gems[i as usize][j as usize].gem_type == self.gems[i as usize][j+1 as usize].gem_type {
-                    self.gems[i as usize][j as usize].set_next_type();
+                if self.gems[i][j].gem_type == self.gems[i][j-1].gem_type &&
+                   self.gems[i][j].gem_type == self.gems[i][j+1].gem_type {
+                    self.gems[i][j].set_next_type();
                    }
             }
         }
@@ -190,8 +190,8 @@ impl Board {
 
         for i in 0..8 {
             for j in 0..8 {
-                if self.gems[i as usize][j as usize].gem_type == NO_GEM {
-                    self.gems[i as usize][j as usize] = Gem::new(rand::thread_rng().gen_range(1..6), i, j, 0);
+                if self.gems[i][j].gem_type == NO_GEM {
+                    self.gems[i][j] = Gem::new(rand::thread_rng().gen_range(1..6), i as i32, j as i32, 0);
                 }
             }
         }
@@ -333,7 +333,7 @@ impl Board {
                     self.combo += 1;
                     let c = if self.combo > 7 {7} else {self.combo};
                     let _ =  manager.play_sound(format!("combo{:?}", c).as_str());
-                    self.sweep_matches();
+                    self.sweep_matches(&manager);
                 } else {
                     self.combo = -1;
                 }
@@ -383,12 +383,12 @@ impl Board {
 
         for i in 0..6 {
             for j in 0..8 {
-                if self.gems[i as usize][j as usize].gem_type == self.gems[i+1 as usize][j as usize].gem_type &&
-                   self.gems[i as usize][j as usize].gem_type == self.gems[i+2 as usize][j as usize].gem_type {
+                if self.gems[i][j].gem_type == self.gems[i+1][j].gem_type &&
+                   self.gems[i][j].gem_type == self.gems[i+2][j].gem_type {
                     if !init_stage {
-                        self.gems[i as usize][j as usize].is_matched = true;
-                        self.gems[i+1 as usize][j as usize].is_matched = true;
-                        self.gems[i+2 as usize][j as usize].is_matched = true;
+                        self.gems[i][j].is_matched = true;
+                        self.gems[i+1][j].is_matched = true;
+                        self.gems[i+2][j].is_matched = true;
                     }
                     self.has_match = true;
                 }
@@ -397,12 +397,12 @@ impl Board {
 
         for i in 0..8 {
             for j in 0..6 {
-                if self.gems[i as usize][j as usize].gem_type == self.gems[i as usize][j+1 as usize].gem_type &&
-                   self.gems[i as usize][j as usize].gem_type == self.gems[i as usize][j+2 as usize].gem_type {
+                if self.gems[i][j].gem_type == self.gems[i][j+1].gem_type &&
+                   self.gems[i][j].gem_type == self.gems[i][j+2].gem_type {
                     if !init_stage {
-                        self.gems[i as usize][j as usize].is_matched = true;
-                        self.gems[i as usize][j+1 as usize].is_matched = true;
-                        self.gems[i as usize][j+2 as usize].is_matched = true;
+                        self.gems[i][j].is_matched = true;
+                        self.gems[i][j+1].is_matched = true;
+                        self.gems[i][j+2].is_matched = true;
                     }
                     self.has_match = true;
                 }
@@ -410,7 +410,7 @@ impl Board {
         }
     }
 
-    fn sweep_matches(&mut self) {
+    fn sweep_matches(&mut self, manager: &AssetManager) {
         for i in 0..8 {
             let mut gems_matched = 0;
             for j in 0..8 {
@@ -449,7 +449,7 @@ impl Board {
             let mut occurences = [0; 6];
             for j in 0..8 {
                 for k in 1..=6 {
-                    if self.gems[i as usize][j as usize].gem_type == k || self.gems[i+1 as usize][j as usize].gem_type == k {
+                    if self.gems[i][j].gem_type == k || self.gems[i+1][j].gem_type == k {
                         occurences[k as usize -1] += 1;
                         if occurences[k as usize -1] >= 3 {
                             self.gameover = false;
@@ -466,7 +466,7 @@ impl Board {
             let mut occurences = [0; 6];
             for i in 0..8 {
                 for k in 1..=6 {
-                    if self.gems[i as usize][j as usize].gem_type == k || self.gems[i as usize][j+1 as usize].gem_type == k {
+                    if self.gems[i][j].gem_type == k || self.gems[i][j+1].gem_type == k {
                         occurences[k as usize -1] += 1;
                         if occurences[k as usize -1] >= 3 {
                             self.gameover = false;
@@ -481,28 +481,30 @@ impl Board {
 
         for i in 0..5 {
             for j in 0..8 {
-                let gem = &self.gems[i as usize][j as usize];
-                let gem2 = &self.gems[i+1 as usize][j as usize];
-                let gem3 = &self.gems[i+2 as usize][j as usize];
-                let gem4 = &self.gems[i+3 as usize][j as usize];
+                let gem = &self.gems[i][j];
+                let gem2 = &self.gems[i+1][j];
+                let gem3 = &self.gems[i+2][j];
+                let gem4 = &self.gems[i+3][j];
 
                 if gem.gem_type == gem4.gem_type &&
                     (gem.gem_type == gem2.gem_type || gem.gem_type == gem3.gem_type) {
                         self.gameover = false;
+                        return;
                 }
             }
         }
 
         for j in 0..5 {
             for i in 0..8 {
-                let gem = &self.gems[i as usize][j as usize];
-                let gem2 = &self.gems[i as usize][j+1 as usize];
-                let gem3 = &self.gems[i as usize][j+2 as usize];
-                let gem4 = &self.gems[i as usize][j+3 as usize];
+                let gem = &self.gems[i][j];
+                let gem2 = &self.gems[i][j+1];
+                let gem3 = &self.gems[i][j+2];
+                let gem4 = &self.gems[i][j+3];
 
                 if gem.gem_type == gem4.gem_type &&
                     (gem.gem_type == gem2.gem_type || gem.gem_type == gem3.gem_type) {
                         self.gameover = false;
+                        return;
                 }
             }
         }

@@ -425,7 +425,7 @@ impl Board {
                         self.swap(i, k, i, k-1, false);
                     }
 
-                    self.gems[i as usize][0] = Gem::new(rand::thread_rng().gen_range(1..6), i, 0, gems_matched);
+                    self.gems[i as usize][0] = Gem::new(rand::thread_rng().gen_range(1..=6), i, 0, gems_matched);
                     gems_matched += 1;
 
                     self.short_wait = true;

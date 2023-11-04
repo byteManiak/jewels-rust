@@ -22,11 +22,10 @@ pub(crate) struct Gem {
 impl Gem {
     pub fn new(gem_type: u8, x: i32, y: i32, yo: i32) -> Self {
         let xpos = BASEX+1+x*16;
-        let ypos = BASEY+1+y*16;
         Self {
             gem_type, is_moving: false, is_matched: false,
             xdest: xpos, x: xpos as f32,
-            ydest: ypos, y: ypos as f32,
+            ydest: BASEY+1+y*16, y: (BASEY-16-yo*16)as f32,
             sprite: Sprite::new(format!("gem{:?}", gem_type), 15, 15, 6, 100),
             start_tick: Instant::now()
         }

@@ -3,25 +3,28 @@ use std::collections::HashSet;
 use sdl2::{keyboard::Keycode, mouse::MouseButton};
 
 pub struct Input {
-    prev_keys_state: HashSet<Keycode>,
     new_keys: HashSet<Keycode>,
     old_keys: HashSet<Keycode>,
-    mouse_buttons: HashSet<MouseButton>,
+    new_mouse_buttons: HashSet<MouseButton>,
+    old_mouse_buttons: HashSet<MouseButton>,
     mouse_coords: (i32, i32)
 }
 
 impl Input {
     pub(crate) fn new() -> Self {
-        Self {prev_keys_state: HashSet::new(), new_keys: HashSet::new(), old_keys: HashSet::new(), mouse_buttons: HashSet::new(), mouse_coords: (0, 0)}
+        Self {
+            new_keys: HashSet::new(), old_keys: HashSet::new(),
+            new_mouse_buttons: HashSet::new(), old_mouse_buttons: HashSet::new(),
+            mouse_coords: (0, 0)
+        }
     }
 
-    pub(crate) fn update(&mut self, keys: &HashSet<Keycode>, mouse_buttons: &HashSet<MouseButton>) {
-        self.new_keys = keys - &self.prev_keys_state;
-        self.old_keys = &self.prev_keys_state - keys;
+    pub(crate) fn update(&mut self, keys: HashSet<Keycode>, mouse_buttons: HashSet<MouseButton>) {
+        self.old_keys = self.new_keys.clone();
+        self.new_keys = keys;
 
-        self.prev_keys_state = keys.clone();
-
-        self.mouse_buttons = mouse_buttons.clone();
+        self.old_mouse_buttons = self.new_mouse_buttons.clone();
+        self.new_mouse_buttons = mouse_buttons;
     }
 
     pub(crate) fn update_mouse_coords(&mut self, mouse_coords: (i32, i32)) {
@@ -45,7 +48,15 @@ impl Input {
     }
 
     pub fn is_button_pressed(&self, button: MouseButton) -> bool {
-        self.mouse_buttons.contains(&button)
+        self.new_mouse_buttons.contains(&button) && !self.old_mouse_buttons.contains(&button)
+    }
+
+    pub fn is_button_released(&self, button: MouseButton) -> bool {
+        self.old_mouse_buttons.contains(&button) && !self.new_mouse_buttons.contains(&button)
+    }
+
+    pub fn is_button_down(&self, button: MouseButton) -> bool {
+        self.new_mouse_buttons.contains(&button) && self.old_mouse_buttons.contains(&button)
     }
 
     pub fn is_in_bounds(x: i32, y: i32, x1: i32, y1: i32, x2: i32, y2: i32) -> bool {

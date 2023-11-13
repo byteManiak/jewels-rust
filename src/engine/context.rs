@@ -50,6 +50,6 @@ impl Context {
 
         let keys: HashSet<Keycode> = events.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode).collect();
         let mouse_buttons: HashSet<MouseButton> = events.mouse_state().pressed_mouse_buttons().collect();
-        self.input.update(&keys, &mouse_buttons);
+        self.input.update(keys, mouse_buttons);
     }
 }

@@ -249,7 +249,9 @@ impl Board {
         } else if input.is_pressed(Keycode::Escape) {
             self.is_paused = true;
         } else {
-            self.is_selecting = Input::is_in_bounds(self.mouse_x, self.mouse_y, BASEX, BASEY, BASEX+BWIDTH, BASEY+BWIDTH) && input.is_button_pressed(MouseButton::Left);
+            self.is_selecting =
+                Input::is_in_bounds(self.mouse_x, self.mouse_y, BASEX, BASEY, BASEX+BWIDTH, BASEY+BWIDTH) &&
+                (input.is_button_pressed(MouseButton::Left) || input.is_button_down(MouseButton::Left));
 
             if !self.is_selecting {
                 self.x_cursor = (self.mouse_x - BASEX) / 16;

@@ -145,7 +145,7 @@ impl Board {
     }
 
     fn is_slot_available(&self, x: i32, y: i32) -> bool {
-        if !(0..=7).contains(&x) && !(0..=7).contains(&y) {
+        if !(0..=7).contains(&x) || !(0..=7).contains(&y) {
             return false;
         }
 

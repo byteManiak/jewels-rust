@@ -54,14 +54,12 @@ pub struct MainMenu {
 }
 
 impl MainMenu {
-    pub(crate) fn new(manager: &AssetManager) -> Self {
-        let channel = manager.play_sound("intro").unwrap();
-
+    pub(crate) fn new(sound_channel: Channel) -> Self {
         Self {
             start_tick: Instant::now(),
             logo_moving: true,
             logo_y: -LOGO_SIZE_Y*2,
-            sound_channel: channel,
+            sound_channel,
             gems: Vec::new()
         }
     }

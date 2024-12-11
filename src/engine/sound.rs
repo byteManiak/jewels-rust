@@ -7,7 +7,7 @@ pub struct SoundManager<'a> {
     music: Option<Music<'a>>
 }
 
-impl<'a> SoundManager<'a> {
+impl SoundManager<'_> {
     pub(crate) fn new() -> Self {
         Self {sounds: HashMap::new(), music: None}
     }

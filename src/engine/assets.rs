@@ -116,7 +116,7 @@ impl<'a, 'b> AssetManager<'a, 'b> {
     }
 }
 
-pub fn u32_palette(c1: u32, c2: u32, c3: u32, c4:u32) -> ColorPalette {
+pub fn u32_palette(c1: u32, c2: u32, c3: u32, c4:u32) -> Result<ColorPalette, String> {
     let color1 = Color::RGBA(
         ((c1 & 0xFF0000) >> 16) as u8,
         ((c1 & 0xFF00) >> 8) as u8,
@@ -142,10 +142,10 @@ pub fn u32_palette(c1: u32, c2: u32, c3: u32, c4:u32) -> ColorPalette {
         0,
     );
 
-    let palette = Palette::with_colors(&[color1, color2, color3, color4]).unwrap();
+    let palette = Palette::with_colors(&[color1, color2, color3, color4])?;
 
-    ColorPalette {
+    Ok(ColorPalette {
         palette,
         colors: [color1, color2, color3, color4]
-    }
+    })
 }

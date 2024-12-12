@@ -4,15 +4,15 @@ use sdl2::{render::{TextureCreator, WindowCanvas}, video::WindowContext, pixels:
 
 use super::{sound::SoundManager, texture::{TexManager, ColorPalette}};
 
-pub struct AssetManager<'a, 'b> {
+pub struct AssetManager<'a> {
     tex_manager: TexManager<'a>,
     snd_manager: SoundManager<'a>,
-    font: &'a Font<'a, 'b>,
+    font: &'a Font<'a, 'static>,
     renderer: Rc<RefCell<WindowCanvas>>
 }
 
-impl<'a, 'b> AssetManager<'a, 'b> {
-    pub fn new(texture_creator: &'a TextureCreator<WindowContext>, renderer: &Rc<RefCell<WindowCanvas>>, font: &'a Font<'a, 'b>, palette: ColorPalette) -> Self {
+impl<'a> AssetManager<'a> {
+    pub fn new(texture_creator: &'a TextureCreator<WindowContext>, renderer: &Rc<RefCell<WindowCanvas>>, font: &'a Font<'a, 'static>, palette: ColorPalette) -> Self {
         let tex_manager = TexManager::new(texture_creator, palette);
         let snd_manager = SoundManager::new();
         Self {tex_manager, snd_manager, font, renderer: renderer.clone()}
